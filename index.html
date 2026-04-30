@@ -1,0 +1,1948 @@
+﻿<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Investuj s rozumom - demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f9f9ff;
+      --card: #ffffff;
+      --card-soft: #f0f3ff;
+      --card-mid: #e4eaff;
+      --ink: #191c20;
+      --muted: #585e71;
+      --line: #c5c6d0;
+      --blue: #4479ff;
+      --blue-dark: #00174b;
+      --purple: #5851d8;
+      --green: #138a4d;
+      --red: #c43d3d;
+      --yellow: #f2c94c;
+      --shadow: 0 8px 24px rgba(68, 121, 255, .065), 0 2px 8px rgba(17, 49, 86, .035);
+      --shadow-strong: 0 18px 38px rgba(0, 23, 75, .16);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html { min-height: 100%; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(68,121,255,.12), transparent 34rem),
+        linear-gradient(180deg, #f9f9ff 0%, #f4f7ff 100%);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100dvh; padding-bottom: 92px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(255,255,255,.86);
+      border-bottom: 1px solid rgba(197,198,208,.72);
+      backdrop-filter: blur(16px);
+    }
+    .topbar-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      min-height: 66px;
+      padding: 12px 18px;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      gap: 10px;
+      align-items: center;
+    }
+    .brand {
+      text-align: center;
+      font-weight: 850;
+      color: var(--blue);
+      letter-spacing: 0;
+    }
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(240,243,255,.72);
+      color: var(--blue-dark);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+    .icon-btn:hover { background: #e4eaff; }
+    .icon-btn:disabled { opacity: .2; cursor: default; }
+
+    main {
+      width: min(100%, 1040px);
+      margin: 0 auto;
+      padding: 22px 18px 34px;
+    }
+    .screen { animation: rise .18s ease-out; }
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(26px, 8vw, 42px); line-height: 1.08; letter-spacing: 0; margin-bottom: 10px; }
+    h2 { font-size: 24px; line-height: 1.2; margin-bottom: 8px; }
+    h3 { font-size: 17px; margin-bottom: 10px; }
+    p { color: var(--muted); line-height: 1.55; }
+    .eyebrow {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+    .amount {
+      font-size: clamp(30px, 10vw, 48px);
+      font-weight: 900;
+      letter-spacing: 0;
+      color: inherit;
+    }
+
+    .grid { display: grid; gap: 14px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid.categories { grid-template-columns: 1fr; }
+    .section { margin-top: 24px; }
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(197,198,208,.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .hero {
+      background:
+        radial-gradient(circle at 86% 10%, rgba(255,255,255,.18), transparent 9rem),
+        linear-gradient(135deg, var(--blue), var(--purple));
+      color: #fff;
+      border: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero p { color: rgba(255,255,255,.82); }
+    .hero:after {
+      content: "";
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      right: -70px;
+      top: -65px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.14);
+    }
+    .dark-card {
+      background:
+        radial-gradient(circle at 96% 6%, rgba(68,121,255,.42), transparent 9rem),
+        linear-gradient(135deg, var(--blue-dark), #113156);
+      color: #fff;
+      border: 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-strong);
+    }
+    .dark-card p { color: rgba(255,255,255,.74); }
+    .stat-card p { margin-bottom: 8px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+    .stat-card strong { display: block; font-size: 22px; }
+    .page-intro {
+      margin-bottom: 22px;
+    }
+    .page-intro h1,
+    .page-intro h2 {
+      margin-bottom: 4px;
+      font-size: 24px;
+      font-weight: 850;
+    }
+    .page-intro p {
+      margin-bottom: 0;
+      font-size: 14px;
+    }
+    .total-card {
+      min-height: 154px;
+      padding: 24px;
+    }
+    .total-card .amount {
+      font-size: 32px;
+      line-height: 1.2;
+    }
+    .total-watermark {
+      position: absolute;
+      right: -18px;
+      top: -22px;
+      font-size: 132px;
+      opacity: .1;
+      color: #fff;
+      line-height: 1;
+    }
+    .soft-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 8px;
+      padding: 4px 8px;
+      background: rgba(26, 188, 110, .16);
+      color: #39d987;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .action-stack {
+      display: grid;
+      gap: 12px;
+    }
+    .action-pair {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .action-btn {
+      border-radius: 16px;
+      min-height: 54px;
+      font-size: 15px;
+    }
+    .action-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      font-size: 17px;
+      line-height: 1;
+    }
+    .portfolio-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .portfolio-head h2,
+    .portfolio-head h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .link-btn {
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 850;
+      padding: 0;
+    }
+    .portfolio-card {
+      display: grid;
+      grid-template-columns: 48px 1fr auto;
+      gap: 13px;
+      align-items: center;
+      text-align: left;
+      padding: 16px;
+      border-radius: 20px;
+    }
+    .portfolio-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: #edf1ff;
+      color: var(--blue);
+      font-size: 21px;
+      font-weight: 900;
+    }
+    .portfolio-title {
+      margin: 0 0 4px;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 850;
+    }
+    .portfolio-meta {
+      margin: 0;
+      color: #737989;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .portfolio-value {
+      color: var(--ink);
+      text-align: right;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .portfolio-gain {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .payment-row {
+      display: grid;
+      grid-template-columns: 1fr 42px;
+      gap: 12px;
+      align-items: center;
+    }
+    .copy-btn {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--card-soft);
+      color: var(--blue);
+      font-weight: 900;
+    }
+    .order-card {
+      border-radius: 20px;
+      padding: 20px;
+    }
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .wallet-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--card-soft);
+      color: var(--blue);
+      font-size: 22px;
+      font-weight: 900;
+    }
+    .mini-chart {
+      width: 96px;
+      height: 48px;
+      opacity: .95;
+    }
+    .order-summary {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .summary-box {
+      border-radius: 16px;
+      background: var(--card-soft);
+      border: 1px solid rgba(197,198,208,.38);
+      padding: 14px;
+    }
+    .summary-box p {
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .summary-box strong {
+      display: block;
+      font-size: 16px;
+    }
+    .order-total {
+      margin-top: 14px;
+      border-radius: 20px;
+      background: var(--blue-dark);
+      color: #fff;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      box-shadow: var(--shadow-strong);
+    }
+    .order-total span { color: rgba(255,255,255,.78); }
+    .order-total strong { font-size: 22px; text-align: right; }
+    .legal {
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.55;
+      padding-inline: 14px;
+    }
+
+    .btn {
+      min-height: 52px;
+      border: 0;
+      border-radius: 999px;
+      padding: 14px 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 850;
+      text-decoration: none;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease, box-shadow .12s ease;
+    }
+    .btn:active { transform: scale(.98); }
+    .btn.primary { background: var(--blue); color: #fff; box-shadow: 0 10px 26px rgba(68,121,255,.24); }
+    .btn.dark { background: var(--blue-dark); color: #fff; }
+    .btn.ghost { background: #fff; color: var(--blue); border: 1px solid rgba(47,104,255,.24); }
+    .btn.soft { background: var(--card-soft); color: var(--blue-dark); }
+    .btn.danger { background: #fff2f2; color: var(--red); border: 1px solid #ffd4d4; }
+    .btn.full { width: 100%; }
+    .btn[disabled] { opacity: .48; cursor: not-allowed; box-shadow: none; }
+    .choice {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      min-height: 60px;
+      font-weight: 900;
+      box-shadow: 0 3px 10px rgba(68,121,255,.035);
+    }
+    .choice.active { border-color: var(--blue); background: var(--card-soft); color: var(--blue-dark); }
+
+    .input {
+      width: 100%;
+      min-height: 56px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 13px 15px;
+      font-weight: 800;
+      color: var(--ink);
+      outline: none;
+    }
+    .input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(68,121,255,.14); }
+    .field { display: grid; gap: 8px; }
+    .field label { color: var(--muted); font-size: 12px; font-weight: 850; text-transform: uppercase; letter-spacing: .06em; }
+    .input-wrap { position: relative; }
+    .input-wrap .suffix {
+      position: absolute;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-weight: 900;
+    }
+    .input-wrap .input { padding-right: 54px; }
+
+    .rows { display: grid; gap: 10px; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(197,198,208,.48);
+    }
+    .row:last-child { border-bottom: 0; }
+    .row span:first-child { color: var(--muted); }
+    .row strong, .row span:last-child { text-align: right; }
+
+    .asset-card {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+    .asset-card h3 { margin-bottom: 3px; }
+    .asset-card p { margin-bottom: 0; font-size: 13px; }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 64px;
+      padding: 0 18px;
+      background: #fff;
+      border: 1px solid rgba(117,119,128,.36);
+      border-radius: 28px;
+      box-shadow: inset 0 -2px 0 rgba(0,23,75,.04), 0 4px 12px rgba(17,49,86,.08);
+      color: var(--muted);
+      margin-top: 18px;
+    }
+    .search-box span {
+      font-size: 28px;
+      color: #667085;
+    }
+    .search-box input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--ink);
+      font-size: 18px;
+      font-weight: 650;
+    }
+    .search-box input::placeholder { color: #747b8f; }
+    .category-card {
+      position: relative;
+      min-height: 190px;
+      overflow: hidden;
+      text-align: left;
+      border: 1px solid rgba(228,234,255,.95);
+      background: #fff;
+      box-shadow: 0 9px 22px rgba(68,121,255,.075);
+    }
+    .category-card .cat-icon,
+    .asset-icon,
+    .detail-logo {
+      display: grid;
+      place-items: center;
+      color: var(--blue-dark);
+      background: #dce2ff;
+      font-weight: 900;
+    }
+    .category-card .cat-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 22px;
+      font-size: 30px;
+      margin-bottom: 28px;
+    }
+    .category-card .cat-title {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.05;
+      color: #071225;
+      font-weight: 500;
+    }
+    .category-card .cat-sub {
+      margin: 0 0 34px;
+      color: #737989;
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .category-card .cat-link {
+      color: var(--blue);
+      font-size: 20px;
+      font-weight: 850;
+    }
+    .category-card .cat-arrow {
+      position: absolute;
+      right: 30px;
+      bottom: 36px;
+      color: var(--blue);
+      font-size: 42px;
+      line-height: 1;
+      font-weight: 300;
+    }
+    .category-card .cat-watermark {
+      position: absolute;
+      right: -18px;
+      bottom: -12px;
+      color: #00174b;
+      opacity: .035;
+      font-size: 148px;
+      line-height: 1;
+      font-weight: 900;
+      transform: rotate(-2deg);
+    }
+    .asset-list { gap: 12px; }
+    .market-card {
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 16px;
+      text-align: left;
+      box-shadow: 0 7px 18px rgba(68,121,255,.075);
+    }
+    .asset-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      font-size: 18px;
+      color: var(--blue);
+      background: #edf1ff;
+    }
+    .market-card h3 {
+      margin: 0 0 3px;
+      font-size: 16px;
+      color: #313848;
+    }
+    .market-card .ticker {
+      margin: 0 0 12px;
+      color: #6d7484;
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .market-card .desc {
+      grid-column: 2 / 4;
+      margin: -4px 0 4px;
+      font-size: 13px;
+      color: #616978;
+    }
+    .market-price {
+      text-align: right;
+      color: #313848;
+      font-size: 16px;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+    .price-slot {
+      display: inline-flex;
+      max-width: 100%;
+      overflow: hidden;
+      vertical-align: bottom;
+      line-height: 1.08;
+    }
+    .price-slot span {
+      display: inline-block;
+      animation: slotRoll .54s cubic-bezier(.2,.75,.2,1);
+      will-change: transform, opacity, filter;
+    }
+    @keyframes slotRoll {
+      0% { transform: translateY(-1.15em); opacity: .22; filter: blur(3px); }
+      48% { transform: translateY(.18em); opacity: .74; filter: blur(1px); }
+      100% { transform: translateY(0); opacity: 1; filter: blur(0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .price-slot span { animation: none; }
+    }
+    .market-change {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    .market-actions {
+      grid-column: 1 / 4;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .mini-label {
+      color: #596171;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .mini-detail {
+      min-height: 34px;
+      border-radius: 10px;
+      padding: 8px 15px;
+      font-size: 12px;
+      box-shadow: 0 6px 14px rgba(68,121,255,.20);
+    }
+    .detail-hero {
+      position: relative;
+      min-height: 360px;
+      padding: 18px 18px 0;
+      background: #f8f9ff;
+      border: 0;
+      box-shadow: none;
+      overflow: hidden;
+    }
+    .detail-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .detail-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      color: #78d9ff;
+      background: #062846;
+      font-size: 17px;
+    }
+    .detail-head h1 {
+      margin: 0 0 2px;
+      font-size: 21px;
+      line-height: 1.1;
+    }
+    .detail-head p {
+      margin: 0;
+      font-size: 10px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .detail-price {
+      position: relative;
+      z-index: 2;
+      font-size: 31px;
+      font-weight: 950;
+      letter-spacing: 0;
+      line-height: 1;
+    }
+    .detail-change {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      gap: 7px;
+      align-items: center;
+      margin-top: 7px;
+      color: #10a85c;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .detail-change small {
+      color: #7b8291;
+      font-weight: 700;
+    }
+    .chart-toolbar {
+      position: absolute;
+      right: 18px;
+      top: 88px;
+      z-index: 3;
+      display: inline-flex;
+      gap: 4px;
+      margin-top: 0;
+      padding: 4px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(197,198,208,.54);
+      box-shadow: 0 8px 18px rgba(17,49,86,.08);
+    }
+    .range-btn {
+      min-width: 42px;
+      min-height: 30px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent;
+      color: #596171;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .range-btn.active {
+      background: var(--blue);
+      color: #fff;
+    }
+    .chart.detail-chart {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 220px;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+      border-radius: 0;
+    }
+    .detail-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: -6px;
+      position: relative;
+      z-index: 3;
+    }
+    .metric-card {
+      background: #fff;
+      border: 1px solid rgba(228,234,255,.85);
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(68,121,255,.06);
+      padding: 16px;
+      min-height: 78px;
+    }
+    .risk-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+    }
+    .risk-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #dfe4f2;
+    }
+    .risk-dots span.on { background: #bd2f3a; }
+    .detail-copy {
+      font-size: 13px;
+      color: #111827;
+      line-height: 1.72;
+    }
+    .price { font-weight: 900; white-space: nowrap; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: var(--card-soft);
+      color: var(--blue-dark);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .tag.low { background: #e9f8ef; color: #0f6f3d; }
+    .tag.mid { background: #fff5d8; color: #7a5200; }
+    .tag.high { background: #fff0f0; color: #9f2a2a; }
+    .gain { color: var(--green); font-weight: 900; }
+    .loss { color: var(--red); font-weight: 900; }
+    .empty {
+      text-align: center;
+      padding: 28px 18px;
+      color: var(--muted);
+      background: #fff;
+      border: 1px dashed rgba(117,119,128,.45);
+      border-radius: var(--radius);
+    }
+
+    .chart {
+      width: 100%;
+      height: 178px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, #fff, var(--card-soft));
+      border: 1px solid rgba(197,198,208,.58);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .chart svg { width: 100%; height: 100%; display: block; }
+    .chart-grid { stroke: rgba(117,119,128,.18); stroke-width: 1; }
+    .chart-axis { stroke: rgba(25,28,32,.44); stroke-width: 1.2; }
+    .chart-label {
+      fill: #687083;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .chart-title {
+      fill: #313848;
+      font-size: 11px;
+      font-weight: 900;
+    }
+    details {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    summary {
+      cursor: pointer;
+      padding: 16px 18px;
+      font-weight: 900;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary:after { content: "+"; color: var(--blue); }
+    details[open] summary:after { content: "-"; }
+    details .rows { padding: 0 18px 8px; }
+
+    .notice {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      border-radius: 14px;
+      padding: 13px 15px;
+      font-weight: 800;
+      margin-top: 14px;
+    }
+    .notice.show { display: flex; }
+    .notice.info { background: var(--card-soft); color: var(--blue-dark); }
+    .notice.ok { background: #eaf8ef; color: #0f6f3d; }
+    .notice.err { background: #fff0f0; color: #9f2a2a; }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(68,121,255,.22);
+      border-top-color: var(--blue);
+      border-radius: 999px;
+      animation: spin .72s linear infinite;
+      flex: 0 0 auto;
+    }
+    .notice.info .spinner {
+      border-color: rgba(0,23,75,.18);
+      border-top-color: var(--blue-dark);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0, 23, 75, .26);
+      backdrop-filter: blur(10px);
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      width: min(100%, 420px);
+      background: #fff;
+      border: 1px solid rgba(197,198,208,.72);
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(0, 23, 75, .24);
+      padding: 22px;
+      animation: modalUp .18s ease-out;
+    }
+    @keyframes modalUp {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 14px;
+      color: #0f6f3d;
+      background: #eaf8ef;
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .modal h2 { margin-bottom: 8px; }
+    .modal p { margin-bottom: 18px; }
+
+    .bottom-nav {
+      position: fixed;
+      z-index: 20;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,.92);
+      border-top: 1px solid rgba(197,198,208,.72);
+      backdrop-filter: blur(16px);
+    }
+    .bottom-nav-inner {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: 10px 12px 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .nav-btn {
+      border: 0;
+      border-radius: 14px;
+      background: transparent;
+      color: var(--muted);
+      min-height: 54px;
+      display: grid;
+      place-items: center;
+      gap: 2px;
+      font-size: 11px;
+      font-weight: 850;
+    }
+    .nav-btn b { font-size: 20px; line-height: 1; }
+    .nav-btn.active { background: var(--card-soft); color: var(--blue); }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+    .split {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .hide { display: none !important; }
+
+    @media (min-width: 680px) {
+      main { padding-inline: 26px; }
+      .grid.categories { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .split { grid-template-columns: 1.1fr .9fr; align-items: start; }
+      .asset-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <button id="backBtn" class="icon-btn" type="button" aria-label="Späť">‹</button>
+        <div class="brand" id="screenTitle">Investuj s rozumom</div>
+        <button id="homeBtn" class="icon-btn" type="button" aria-label="Prehľad">⌂</button>
+      </div>
+    </header>
+
+    <main id="appRoot" aria-live="polite"></main>
+
+    <div id="appModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal">
+        <div class="modal-icon" id="modalIcon">✓</div>
+        <h2 id="modalTitle">Hotovo</h2>
+        <p id="modalText">Operácia prebehla úspešne.</p>
+        <button id="modalButton" class="btn primary full" type="button">Pokračovať</button>
+      </div>
+    </div>
+
+    <nav class="bottom-nav">
+      <div class="bottom-nav-inner">
+        <button class="nav-btn" id="navDashboard" type="button"><b>▦</b><span>Prehľad</span></button>
+        <button class="nav-btn" id="navMarkets" type="button"><b>⌁</b><span>Trhy</span></button>
+        <button class="nav-btn" id="navWallet" type="button"><b>▣</b><span>Peňaženka</span></button>
+        <button class="nav-btn" id="navReset" type="button"><b>↺</b><span>Reset</span></button>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "edu-invest-demo-v1";
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    const SALARY = 1200;
+    const PRICE_TICK_MS = 10000;
+
+    const categories = [
+      { id: "stocks", name: "Akcie", icon: "▦", volatility: 0.018 },
+      { id: "etf", name: "ETF", icon: "◫", volatility: 0.007 },
+      { id: "commodities", name: "Komodity", icon: "◇", volatility: 0.026 },
+      { id: "crypto", name: "Kryptomeny", icon: "◆", volatility: 0.055 }
+    ];
+
+    const assets = [
+      ["TBAN", "TechBanana", "Akcie", 148, "Technologická spoločnosť so spotrebnou elektronikou.", "vysoké", "akcia"],
+      ["GCAR", "GreenCar", "Akcie", 72, "Výrobca mestských elektrických áut.", "vysoké", "akcia"],
+      ["FOOD", "Foodo", "Akcie", 34, "Sieť rýchleho rozvozu potravín.", "stredné", "akcia"],
+      ["BMAX", "BankoMax", "Akcie", 96, "Digitálna banka pre retailových klientov.", "stredné", "akcia"],
+      ["MEDP", "MedicaPlus", "Akcie", 121, "Zdravotnícka firma s diagnostickými službami.", "stredné", "akcia"],
+      ["SPCY", "SpaceYard", "Akcie", 58, "Vývoj satelitných a logistických riešení.", "vysoké", "akcia"],
+      ["SHOP", "Shopster", "Akcie", 87, "Online marketplace pre malé značky.", "stredné", "akcia"],
+      ["ENFL", "EnergyFlow", "Akcie", 46, "Prevádzkovateľ moderných energetických sietí.", "stredné", "akcia"],
+      ["GAME", "GameForge", "Akcie", 29, "Herné štúdio so živými online titulmi.", "vysoké", "akcia"],
+      ["CLDN", "CloudNine", "Akcie", 164, "Cloudová infraštruktúra pre firmy.", "stredné", "akcia"],
+
+      ["W500", "World500 ETF", "ETF", 112, "Široký fond sledujúci veľké svetové firmy.", "nízke", "ETF"],
+      ["EGRW", "EuroGrowth ETF", "ETF", 54, "Fond zameraný na európske rastové firmy.", "stredné", "ETF"],
+      ["FTEC", "FutureTech ETF", "ETF", 76, "Technologický fond s vyšším rastovým profilom.", "stredné", "ETF"],
+      ["DMIX", "DividendMix ETF", "ETF", 42, "Fond zameraný na dividendové spoločnosti.", "nízke", "ETF"],
+      ["SAFE", "SafeWorld ETF", "ETF", 38, "Konzervatívnejší globálny fond.", "nízke", "ETF"],
+      ["EMKT", "EmergingMarkets ETF", "ETF", 31, "Fond rozvíjajúcich sa trhov.", "stredné", "ETF"],
+      ["CENE", "CleanEnergy ETF", "ETF", 44, "Fond firiem z čistej energie.", "stredné", "ETF"],
+      ["HLTH", "HealthCare ETF", "ETF", 67, "Fond zdravotníckych a farmaceutických firiem.", "nízke", "ETF"],
+      ["REST", "RealEstate ETF", "ETF", 25, "Fond realitných spoločností.", "stredné", "ETF"],
+      ["GBAL", "GlobalBalance ETF", "ETF", 49, "Vyvážený fond naprieč regiónmi.", "nízke", "ETF"],
+
+      ["GOLD", "Goldík", "Komodity", 184, "Fiktívny nástroj sledujúci cenu zlata.", "stredné", "komodita"],
+      ["SILV", "Silvera", "Komodity", 28, "Fiktívny nástroj sledujúci cenu striebra.", "stredné", "komodita"],
+      ["OILK", "Oilko", "Komodity", 69, "Energetická komodita naviazaná na ropu.", "vysoké", "komodita"],
+      ["GASX", "Gasix", "Komodity", 37, "Fiktívny nástroj pre zemný plyn.", "vysoké", "komodita"],
+      ["WHEA", "WheatCoin", "Komodity", 18, "Poľnohospodársky nástroj naviazaný na pšenicu.", "stredné", "komodita"],
+      ["COPR", "CopperMax", "Komodity", 32, "Priemyselná komodita naviazaná na meď.", "stredné", "komodita"],
+      ["COFF", "CoffeeBean", "Komodity", 22, "Fiktívny nástroj sledujúci kávu.", "vysoké", "komodita"],
+      ["CORN", "Cornex", "Komodity", 16, "Poľnohospodársky nástroj naviazaný na kukuricu.", "stredné", "komodita"],
+      ["LITX", "LithiumX", "Komodity", 51, "Komoditný nástroj pre lítium.", "vysoké", "komodita"],
+      ["WATR", "WaterIndex", "Komodity", 40, "Index infraštruktúry vody.", "stredné", "komodita"],
+
+      ["BTKR", "BitKoruna", "Kryptomeny", 310, "Fiktívna digitálna mena s obmedzenou ponukou.", "vysoké", "krypto"],
+      ["ETHK", "Etherka", "Kryptomeny", 156, "Sieťový token pre decentralizované aplikácie.", "vysoké", "krypto"],
+      ["MPES", "MemePes", "Kryptomeny", 4, "Komunitný token s výraznou volatilitou.", "vysoké", "krypto"],
+      ["STEU", "StableEuro", "Kryptomeny", 1, "Fiktívny stabilný token naviazaný na euro.", "nízke", "krypto"],
+      ["CHBX", "ChainBox", "Kryptomeny", 23, "Token pre dátovú infraštruktúru.", "vysoké", "krypto"],
+      ["GRBL", "GreenBlock", "Kryptomeny", 18, "Token zameraný na energeticky úsporné siete.", "vysoké", "krypto"],
+      ["FAST", "FastCoin", "Kryptomeny", 12, "Token pre rýchle mikroplatby.", "vysoké", "krypto"],
+      ["PRVC", "PrivacyCat", "Kryptomeny", 29, "Fiktívny token so zameraním na súkromie.", "vysoké", "krypto"],
+      ["META", "MetaToken", "Kryptomeny", 9, "Token pre virtuálne služby a identitu.", "vysoké", "krypto"],
+      ["GMCO", "GameCoin", "Kryptomeny", 7, "Token herných ekonomík.", "vysoké", "krypto"]
+    ].map(([id, name, category, basePrice, description, risk, type], index) => ({
+      id, name, category, basePrice, description, risk, type,
+      issuer: ["BlueBridge", "Nova Capital", "Danube Funds", "Atlas Markets"][index % 4],
+      currency: "EUR",
+      ter: type === "ETF" ? (0.07 + (index % 6) * 0.05).toFixed(2) + " %" : "none",
+      dividend: type === "akcia" ? ["DIST", "none", "ACC"][index % 3] : type === "ETF" ? ["ACC", "DIST"][index % 2] : "none",
+      replication: type === "ETF" ? ["physical", "synthetic"][index % 2] : "none"
+    }));
+
+    const byId = Object.fromEntries(assets.map(asset => [asset.id, asset]));
+    let state = loadState();
+    let route = { screen: state.transferredAmount > 0 ? "dashboard" : "salary" };
+    let historyStack = [];
+    let selectedTransfer = 100;
+    let selectedChartRange = "5D";
+    let pendingLargeTransfer = null;
+
+    const root = document.getElementById("appRoot");
+    const title = document.getElementById("screenTitle");
+    const backBtn = document.getElementById("backBtn");
+    const homeBtn = document.getElementById("homeBtn");
+    const navDashboard = document.getElementById("navDashboard");
+    const navMarkets = document.getElementById("navMarkets");
+    const navWallet = document.getElementById("navWallet");
+    const navReset = document.getElementById("navReset");
+    const appModal = document.getElementById("appModal");
+    const modalIcon = document.getElementById("modalIcon");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const modalButton = document.getElementById("modalButton");
+
+    function defaultState() {
+      const prices = {};
+      assets.forEach(asset => {
+        prices[asset.id] = roundMoney(asset.basePrice * (0.985 + seeded(asset.id) * 0.03));
+      });
+      return {
+        sessionStart: Date.now(),
+        transferredAmount: 0,
+        cash: 0,
+        holdings: {},
+        prices
+      };
+    }
+
+    function loadState() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!parsed || Date.now() - parsed.sessionStart > DAY_MS) {
+          localStorage.removeItem(STORAGE_KEY);
+          return defaultState();
+        }
+        return { ...defaultState(), ...parsed, prices: { ...defaultState().prices, ...(parsed.prices || {}) } };
+      } catch {
+        return defaultState();
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function seeded(text) {
+      let hash = 0;
+      for (let i = 0; i < text.length; i++) hash = (hash * 31 + text.charCodeAt(i)) >>> 0;
+      return (hash % 1000) / 1000;
+    }
+
+    function seededUnit(text) {
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      return ((hash >>> 0) % 100000) / 100000;
+    }
+
+    function formatMoney(value) {
+      return new Intl.NumberFormat("sk-SK", { style: "currency", currency: "EUR", maximumFractionDigits: 2 }).format(Number(value) || 0);
+    }
+
+    function animatedPrice(value, className = "") {
+      const text = formatMoney(value);
+      return `<span class="price-slot ${className}" aria-label="${text}"><span>${text}</span></span>`;
+    }
+
+    function formatUnits(value) {
+      const n = Number(value) || 0;
+      return n.toLocaleString("sk-SK", { maximumFractionDigits: 4 });
+    }
+
+    function roundMoney(value) {
+      return Math.round((Number(value) || 0) * 100) / 100;
+    }
+
+    function categoryOf(name) {
+      return categories.find(cat => cat.name === name);
+    }
+
+    function movePrices() {
+      assets.forEach(asset => {
+        const cat = categoryOf(asset.category);
+        const volatility = cat ? cat.volatility : 0.015;
+        const drift = (Math.random() - 0.47) * volatility;
+        const current = state.prices[asset.id] || asset.basePrice;
+        const min = asset.basePrice * 0.65;
+        const max = asset.basePrice * 1.45;
+        state.prices[asset.id] = roundMoney(Math.min(max, Math.max(min, current * (1 + drift))));
+      });
+      saveState();
+    }
+
+    function canAutoRefreshPrices() {
+      if (state.transferredAmount <= 0 || route.screen === "salary") return false;
+      if (appModal.classList.contains("show")) return false;
+      const activeTag = document.activeElement ? document.activeElement.tagName : "";
+      return !["INPUT", "TEXTAREA", "SELECT"].includes(activeTag);
+    }
+
+    function tickPrices() {
+      movePrices();
+      if (canAutoRefreshPrices()) refreshVisiblePrices();
+    }
+
+    function priceMoveMarkup(assetId) {
+      const asset = byId[assetId];
+      const move = pctMove(assetId);
+      return `${move >= 0 ? "↗ +" : "↘ "}${Math.abs(state.prices[assetId] - asset.basePrice).toFixed(2)} (${move >= 0 ? "+" : ""}${move.toFixed(2)} %)`;
+    }
+
+    function refreshVisiblePrices() {
+      if (route.screen === "detail") {
+        const asset = byId[route.assetId];
+        const move = pctMove(asset.id);
+        const detailPrice = root.querySelector(".detail-price");
+        const detailChange = root.querySelector(".detail-change");
+        const detailChart = root.querySelector(".detail-chart");
+        if (detailPrice) detailPrice.innerHTML = animatedPrice(state.prices[asset.id]);
+        if (detailChange) {
+          detailChange.classList.toggle("loss", move < 0);
+          detailChange.innerHTML = `<span>${priceMoveMarkup(asset.id)}</span><small>Dnes</small>`;
+        }
+        if (detailChart) detailChart.innerHTML = chartSvg(asset.id);
+        return;
+      }
+      if (route.screen === "category") {
+        root.querySelectorAll("[data-asset-row]").forEach(card => {
+          const asset = byId[card.dataset.assetRow];
+          const move = pctMove(asset.id);
+          const price = card.querySelector(".market-price");
+          if (!price) return;
+          price.innerHTML = `
+            ${animatedPrice(state.prices[asset.id])}
+            <span class="market-change ${move >= 0 ? "gain" : "loss"}">${move >= 0 ? "↗ +" : "↘ "}${move.toFixed(2)}%</span>
+          `;
+        });
+        return;
+      }
+      if (route.screen === "dashboard") {
+        renderPortfolioList();
+      }
+    }
+
+    function navigate(nextRoute, replace = false) {
+      if (!replace) historyStack.push(route);
+      route = nextRoute;
+      movePrices();
+      render();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function back() {
+      route = historyStack.pop() || (state.transferredAmount > 0 ? { screen: "dashboard" } : { screen: "salary" });
+      render();
+    }
+
+    function resetDemo() {
+      localStorage.removeItem(STORAGE_KEY);
+      state = defaultState();
+      route = { screen: "salary" };
+      historyStack = [];
+      selectedTransfer = 100;
+      render();
+    }
+
+    function portfolioValue() {
+      return Object.values(state.holdings).reduce((sum, holding) => {
+        return sum + holding.units * (state.prices[holding.id] || byId[holding.id].basePrice);
+      }, 0);
+    }
+
+    function holdingFor(id) {
+      return state.holdings[id] || null;
+    }
+
+    function riskClass(risk) {
+      return risk === "nízke" ? "low" : risk === "stredné" ? "mid" : "high";
+    }
+
+    function iconForAsset(asset) {
+      if (asset.category === "Akcie") return "↗";
+      if (asset.category === "ETF") return "◈";
+      if (asset.category === "Komodity") return asset.id === "GOLD" ? "▣" : "◇";
+      return "◆";
+    }
+
+    function categoryMeta(name) {
+      const map = {
+        "Akcie": { icon: "⌁", sub: "Individuálne tituly", count: "2 400+", watermark: "⌁" },
+        "ETF": { icon: "◈", sub: "Diverzifikované koše", count: "850+", watermark: "◇" },
+        "Komodity": { icon: "◇", sub: "Suroviny a indexy", count: "120+", watermark: "◇" },
+        "Kryptomeny": { icon: "◆", sub: "Digitálne aktíva", count: "300+", watermark: "◆" }
+      };
+      return map[name] || { icon: "□", sub: "Investičná kategória", count: "100+", watermark: "□" };
+    }
+
+    function pctMove(assetId) {
+      const asset = byId[assetId];
+      return ((state.prices[assetId] - asset.basePrice) / asset.basePrice) * 100;
+    }
+
+    function riskDots(risk) {
+      const count = risk === "nízke" ? 2 : risk === "stredné" ? 3 : 5;
+      return Array.from({ length: 5 }, (_, i) => `<span class="${i < count ? "on" : ""}"></span>`).join("");
+    }
+
+    function setTitle(text) {
+      title.textContent = text;
+      backBtn.disabled = historyStack.length === 0 || route.screen === "salary";
+      homeBtn.disabled = state.transferredAmount <= 0 || route.screen === "dashboard";
+      navDashboard.classList.toggle("active", route.screen === "dashboard");
+      navMarkets.classList.toggle("active", ["categories", "category", "detail", "buy", "sell"].includes(route.screen));
+      navWallet.classList.toggle("active", route.screen === "salary");
+    }
+
+    function render() {
+      if (route.screen === "salary") return renderSalary();
+      if (route.screen === "dashboard") return renderDashboard();
+      if (route.screen === "categories") return renderCategories();
+      if (route.screen === "category") return renderCategory(route.category);
+      if (route.screen === "detail") return renderDetail(route.assetId);
+      if (route.screen === "buy") return renderBuy(route.assetId);
+      if (route.screen === "sell") return renderSell(route.assetId);
+    }
+
+    function renderSalary() {
+      setTitle("Prevod peňazí");
+      root.innerHTML = `
+        <section class="screen">
+          <div class="card hero">
+            <p class="eyebrow">Notifikácia</p>
+            <h1>Prišla ti výplata: 1200 €</h1>
+            <p>Vaše prostriedky sú pripravené na prevod alebo investovanie.</p>
+          </div>
+
+          <div class="section">
+            <p class="eyebrow">Zvoliť sumu na prevod</p>
+            <div class="grid three" id="presetButtons">
+              ${[50, 100, 200].map(amount => `<button class="choice ${selectedTransfer === amount ? "active" : ""}" data-amount="${amount}" type="button">${amount} €</button>`).join("")}
+            </div>
+            <div class="field section">
+              <label for="customTransfer">Vlastná suma</label>
+              <div class="input-wrap">
+                <input id="customTransfer" class="input" type="number" min="1" max="${SALARY}" step="1" inputmode="decimal" placeholder="0">
+                <span class="suffix">€</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card section">
+            <p class="eyebrow">Platobné údaje</p>
+            <div class="rows">
+              <div class="row payment-row">
+                <span><span class="eyebrow" style="display:block;margin-bottom:2px">IBAN</span><strong>SK00 0000 0000 0000 1234 5678</strong></span>
+                <button class="copy-btn" type="button" aria-label="Kopírovať IBAN">□</button>
+              </div>
+              <div class="row payment-row">
+                <span><span class="eyebrow" style="display:block;margin-bottom:2px">VS</span><strong>2026</strong></span>
+                <button class="copy-btn" type="button" aria-label="Kopírovať VS">□</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="transferNotice" class="notice info"></div>
+          <button id="sendMoneyBtn" class="btn dark full section" type="button">Poslať peniaze <span aria-hidden="true">→</span></button>
+        </section>
+      `;
+
+      root.querySelectorAll("[data-amount]").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedTransfer = Number(button.dataset.amount);
+          pendingLargeTransfer = null;
+          root.querySelector("#customTransfer").value = "";
+          renderSalary();
+        });
+      });
+      root.querySelector("#customTransfer").addEventListener("input", event => {
+        selectedTransfer = Number(event.target.value) || 0;
+        pendingLargeTransfer = null;
+        root.querySelectorAll(".choice").forEach(btn => btn.classList.remove("active"));
+      });
+      root.querySelector("#sendMoneyBtn").addEventListener("click", () => {
+        const custom = Number(root.querySelector("#customTransfer").value);
+        const amount = custom > 0 ? custom : selectedTransfer;
+        const notice = root.querySelector("#transferNotice");
+        if (!amount || amount <= 0 || amount > SALARY) {
+          notice.className = "notice err show";
+          notice.textContent = "Zadaj sumu od 1 € do 1200 €.";
+          return;
+        }
+        if (amount > SALARY * 0.3 && pendingLargeTransfer !== amount) {
+          pendingLargeTransfer = amount;
+          notice.className = "notice err show";
+          notice.textContent = "Ufff, dávaj pozor aby si nežil iba na vifónkach. Ak si si istý, klikni ešte raz na Poslať peniaze. Je to na tebe!";
+          return;
+        }
+        pendingLargeTransfer = null;
+        root.querySelector("#sendMoneyBtn").disabled = true;
+        notice.className = "notice info show";
+        notice.innerHTML = `<span class="spinner" aria-hidden="true"></span><span>Spracovávame platbu...</span>`;
+        setTimeout(() => {
+          state.transferredAmount = roundMoney(amount);
+          state.cash = roundMoney(amount);
+          state.sessionStart = Date.now();
+          saveState();
+          notice.className = "notice ok show";
+          notice.innerHTML = `<span aria-hidden="true">✓</span><span>Platba dorazila na investičný účet.</span>`;
+          setTimeout(() => navigate({ screen: "dashboard" }, true), 800);
+        }, 800);
+      });
+    }
+
+    function renderDashboard() {
+      setTitle("Prehľad účtu");
+      const investments = portfolioValue();
+      const total = state.cash + investments;
+      root.innerHTML = `
+        <section class="screen">
+          <div class="page-intro">
+            <h2>Prehľad účtu</h2>
+            <p>Dnes je tvoj demo účet pripravený.</p>
+          </div>
+
+          <div class="card dark-card total-card">
+            <div class="total-watermark" aria-hidden="true">⌁</div>
+            <p class="eyebrow">Celková hodnota účtu</p>
+            <div class="amount">${formatMoney(total)}</div>
+            <div class="toolbar" style="margin-top:12px">
+              <span class="soft-badge">↗ +${investments > 0 ? "2,45" : "0,00"} %</span>
+              <span style="color:rgba(255,255,255,.62);font-size:13px">demo vývoj účtu</span>
+            </div>
+          </div>
+
+          <div class="grid two section">
+            <div class="card stat-card"><p>Investície</p><strong>${formatMoney(investments)}</strong></div>
+            <div class="card stat-card"><p>Hotovosť</p><strong>${formatMoney(state.cash)}</strong></div>
+          </div>
+
+          <div class="action-stack section">
+            <button id="investBtn" class="btn primary full action-btn" type="button"><span class="action-icon">＋</span>Investovať</button>
+            <div class="action-pair">
+              <button id="withdrawBtn" class="btn ghost action-btn" type="button"><span class="action-icon">↙</span>Vybrať</button>
+              <button id="addMoneyBtn" class="btn ghost action-btn" type="button"><span class="action-icon">↗</span>Pridať</button>
+            </div>
+          </div>
+          <div id="dashboardNotice" class="notice info"></div>
+
+          <section class="section">
+            <div class="portfolio-head">
+              <h3>Moje portfólio</h3>
+              <button class="link-btn" id="showAllPortfolio" type="button">Zobraziť všetko</button>
+            </div>
+            <div id="portfolioList"></div>
+          </section>
+        </section>
+      `;
+      root.querySelector("#investBtn").addEventListener("click", () => navigate({ screen: "categories" }));
+      root.querySelector("#addMoneyBtn").addEventListener("click", () => showNotice("dashboardNotice", "info", "Už nemáš viac peňazí na účte. Počkaj na ďalšiu výplatu."));
+      root.querySelector("#withdrawBtn").addEventListener("click", withdrawCash);
+      root.querySelector("#showAllPortfolio").addEventListener("click", () => {
+        if (Object.values(state.holdings).length) return;
+        showNotice("dashboardNotice", "info", "Portfólio je zatiaľ prázdne. Najprv si otvor kategóriu Investovať.");
+      });
+      renderPortfolioList();
+    }
+
+    function withdrawCash() {
+      const notice = root.querySelector("#dashboardNotice");
+      if (state.cash <= 0) {
+        showNotice("dashboardNotice", "err", "Na výber nemáš dostupnú hotovosť.");
+        return;
+      }
+      const value = prompt(`Koľko chceš vybrať? Dostupné: ${formatMoney(state.cash)}`, String(Math.floor(state.cash)));
+      if (value === null) return;
+      const amount = roundMoney(Number(String(value).replace(",", ".")));
+      if (!amount || amount <= 0 || amount > state.cash) {
+        notice.className = "notice err show";
+        notice.textContent = "Zadaj platnú sumu najviac do výšky dostupnej hotovosti.";
+        return;
+      }
+      state.cash = roundMoney(state.cash - amount);
+      saveState();
+      renderDashboard();
+      showNotice("dashboardNotice", "ok", `Vybral si ${formatMoney(amount)}.`);
+    }
+
+    function renderPortfolioList() {
+      const list = root.querySelector("#portfolioList");
+      const holdings = Object.values(state.holdings);
+      if (!holdings.length) {
+        list.innerHTML = `<div class="empty">Zatiaľ nemáš žiadne investície.</div>`;
+        return;
+      }
+      list.innerHTML = `<div class="grid">${holdings.map(holding => {
+        const asset = byId[holding.id];
+        const currentPrice = state.prices[holding.id];
+        const currentValue = holding.units * currentPrice;
+        const cost = holding.units * holding.avgPrice;
+        const gain = currentValue - cost;
+        const gainPct = cost ? gain / cost * 100 : 0;
+        return `
+          <button class="card portfolio-card" data-holding="${holding.id}" type="button">
+            <div class="portfolio-icon" aria-hidden="true">${iconForAsset(asset)}</div>
+            <div>
+              <p class="portfolio-title">${asset.name}</p>
+              <p class="portfolio-meta">${asset.category} · ${formatUnits(holding.units)} ks</p>
+              <p class="portfolio-meta">Priemer ${formatMoney(holding.avgPrice)} · Cena ${formatMoney(currentPrice)}</p>
+            </div>
+            <div class="portfolio-value">
+              ${formatMoney(currentValue)}
+              <span class="portfolio-gain ${gain >= 0 ? "gain" : "loss"}">${gain >= 0 ? "+" : ""}${formatMoney(gain)} (${gainPct >= 0 ? "+" : ""}${gainPct.toFixed(2)} %)</span>
+            </div>
+          </button>
+        `;
+      }).join("")}</div>`;
+      list.querySelectorAll("[data-holding]").forEach(button => {
+        button.addEventListener("click", () => navigate({ screen: "detail", assetId: button.dataset.holding }));
+      });
+    }
+
+    function renderCategories() {
+      setTitle("Kategórie");
+      root.innerHTML = `
+        <section class="screen">
+          <h1>Investovať</h1>
+          <div class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input id="categorySearch" type="search" placeholder="Hľadať aktíva..." autocomplete="off">
+          </div>
+          <div class="grid categories section">
+            ${categories.map(cat => {
+              const meta = categoryMeta(cat.name);
+              return `
+              <button class="card category-card" data-category="${cat.name}" type="button">
+                <span class="cat-watermark" aria-hidden="true">${meta.watermark}</span>
+                <div class="cat-icon" aria-hidden="true">${meta.icon}</div>
+                <div class="cat-title">${cat.name}</div>
+                <div class="cat-sub">${meta.sub}</div>
+                <div class="cat-link">Prezerať ${meta.count}</div>
+                <span class="cat-arrow" aria-hidden="true">›</span>
+              </button>
+            `}).join("")}
+          </div>
+        </section>
+      `;
+      root.querySelectorAll("[data-category]").forEach(button => {
+        button.addEventListener("click", () => navigate({ screen: "category", category: button.dataset.category }));
+      });
+      const categoryCards = [...root.querySelectorAll("[data-category]")];
+      root.querySelector("#categorySearch").addEventListener("input", event => {
+        const term = event.target.value.trim().toLowerCase();
+        categoryCards.forEach(card => {
+          const name = card.dataset.category.toLowerCase();
+          const meta = categoryMeta(card.dataset.category);
+          card.classList.toggle("hide", term && !name.includes(term) && !meta.sub.toLowerCase().includes(term));
+        });
+      });
+    }
+
+    function renderCategory(category) {
+      setTitle(category);
+      const items = assets.filter(asset => asset.category === category);
+      root.innerHTML = `
+        <section class="screen">
+          <h1>${category}</h1>
+          <div class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input id="assetSearch" type="search" placeholder="Hľadať v kategórii..." autocomplete="off">
+          </div>
+          <div class="grid asset-list section">
+            ${items.map(asset => {
+              const move = pctMove(asset.id);
+              return `
+              <div class="card market-card" data-asset-row="${asset.id}">
+                <div class="asset-icon" aria-hidden="true">${iconForAsset(asset)}</div>
+                <div>
+                  <h3>${asset.name}</h3>
+                  <p class="ticker">${asset.category}: ${asset.id}</p>
+                </div>
+                <div class="market-price">
+                  ${animatedPrice(state.prices[asset.id])}
+                  <span class="market-change ${move >= 0 ? "gain" : "loss"}">${move >= 0 ? "↗ +" : "↘ "}${move.toFixed(2)}%</span>
+                </div>
+                <p class="desc">${asset.description}</p>
+                <div class="market-actions">
+                  <span><span class="mini-label">Riziko:</span> <span class="tag ${riskClass(asset.risk)}">${asset.risk}</span></span>
+                  <button class="btn primary mini-detail" data-detail="${asset.id}" type="button">Detail</button>
+                </div>
+              </div>
+            `}).join("")}
+          </div>
+        </section>
+      `;
+      const cards = [...root.querySelectorAll("[data-asset-row]")];
+      root.querySelector("#assetSearch").addEventListener("input", event => {
+        const term = event.target.value.trim().toLowerCase();
+        cards.forEach(card => {
+          const asset = byId[card.dataset.assetRow];
+          card.classList.toggle("hide", term && !asset.name.toLowerCase().includes(term) && !asset.id.toLowerCase().includes(term));
+        });
+      });
+      root.querySelectorAll("[data-detail]").forEach(button => {
+        button.addEventListener("click", () => navigate({ screen: "detail", assetId: button.dataset.detail }));
+      });
+    }
+
+    function renderDetail(assetId) {
+      const asset = byId[assetId];
+      const owned = holdingFor(assetId);
+      setTitle("Detail aktíva");
+      const move = pctMove(assetId);
+      root.innerHTML = `
+        <section class="screen">
+          <div>
+            <div class="detail-hero">
+              <div class="detail-head">
+                <div class="detail-logo" aria-hidden="true">${iconForAsset(asset)}</div>
+                <div>
+                  <h1>${asset.name}</h1>
+                  <p>${asset.category} · ${asset.issuer}</p>
+                </div>
+              </div>
+              <div class="detail-price">${animatedPrice(state.prices[asset.id])}</div>
+              <div class="detail-change ${move >= 0 ? "" : "loss"}">
+                <span>${move >= 0 ? "↗ +" : "↘ "}${Math.abs(state.prices[asset.id] - asset.basePrice).toFixed(2)} (${move >= 0 ? "+" : ""}${move.toFixed(2)} %)</span>
+                <small>Dnes</small>
+              </div>
+              <div class="chart-toolbar" aria-label="Rozsah grafu">
+                ${["1D", "5D", "1R"].map(range => `<button class="range-btn ${selectedChartRange === range ? "active" : ""}" data-range="${range}" type="button">${range}</button>`).join("")}
+              </div>
+              <div class="chart detail-chart">${chartSvg(asset.id)}</div>
+            </div>
+
+            <div class="detail-metrics">
+              <div class="metric-card">
+                <p class="eyebrow">Úroveň rizika</p>
+                <div class="risk-dots">${riskDots(asset.risk)}<strong style="margin-left:6px">${asset.risk === "nízke" ? "2" : asset.risk === "stredné" ? "3" : "5"}/5</strong></div>
+              </div>
+              <div class="metric-card">
+                <p class="eyebrow">Objem (24h)</p>
+                <strong>${asset.category === "Kryptomeny" ? "420M" : asset.category === "ETF" ? "1,2B" : "860M"} EUR</strong>
+              </div>
+            </div>
+
+            <div class="card section">
+              <h3>Popis aktíva</h3>
+              <p class="detail-copy">${asset.description} Ide o fiktívne demo aktívum používané na ukážku investičného procesu v zjednodušenom účte.</p>
+            </div>
+          </div>
+
+          <div>
+            <details class="section" open>
+              <summary>Rozšírené informácie</summary>
+              <div class="rows">
+                <div class="row"><span>TER</span><strong>${asset.ter}</strong></div>
+                <div class="row"><span>Dividend type</span><strong>${asset.dividend}</strong></div>
+                <div class="row"><span>Replication</span><strong>${asset.replication}</strong></div>
+                <div class="row"><span>Issuer</span><strong>${asset.issuer}</strong></div>
+                <div class="row"><span>Currency</span><strong>${asset.currency}</strong></div>
+              </div>
+            </details>
+
+            <div class="grid section">
+              <button id="buyAssetBtn" class="btn primary full" type="button">Kúpiť</button>
+              ${owned ? `<button id="sellAssetBtn" class="btn ghost full" type="button">Predať</button>` : ""}
+              <button id="backAssetBtn" class="btn soft full" type="button">Späť</button>
+            </div>
+          </div>
+        </section>
+      `;
+      root.querySelector("#buyAssetBtn").addEventListener("click", () => navigate({ screen: "buy", assetId }));
+      const sell = root.querySelector("#sellAssetBtn");
+      if (sell) sell.addEventListener("click", () => navigate({ screen: "sell", assetId }));
+      root.querySelector("#backAssetBtn").addEventListener("click", back);
+      root.querySelectorAll("[data-range]").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedChartRange = button.dataset.range;
+          renderDetail(assetId);
+        });
+      });
+    }
+
+    function chartSvg(assetId) {
+      const asset = byId[assetId];
+      const range = selectedChartRange;
+      const series = historySeries(assetId, range);
+      const prices = series.map(point => point.price);
+      const minPrice = Math.min(...prices);
+      const maxPrice = Math.max(...prices);
+      const padding = Math.max(3, (maxPrice - minPrice) * .18);
+      const yMin = Math.max(.01, minPrice - padding);
+      const yMax = maxPrice + padding;
+      const left = 54;
+      const top = 18;
+      const width = 348;
+      const height = 146;
+      const bottom = top + height;
+      const toX = index => left + (index / Math.max(1, series.length - 1)) * width;
+      const toY = price => bottom - ((price - yMin) / Math.max(.01, yMax - yMin)) * height;
+      const points = series.map((point, index) => [toX(index), toY(point.price)]);
+      const line = points.map((point, index) => `${index ? "L" : "M"} ${point[0].toFixed(1)} ${point[1].toFixed(1)}`).join(" ");
+      const area = `${line} L ${left + width} ${bottom} L ${left} ${bottom} Z`;
+      const ticks = Array.from({ length: 4 }, (_, index) => yMin + ((yMax - yMin) / 3) * index).reverse();
+      const xLabels = range === "1D" ? ["9:00", "13:00", "17:00"] : range === "5D" ? ["Po", "St", "Pi"] : ["Jan", "Jun", "Dec"];
+      const last = series[series.length - 1].price;
+      const first = series[0].price;
+      const stroke = last >= first ? "#138a4d" : "#c43d3d";
+      return `
+        <svg viewBox="0 0 420 220" role="img" aria-label="Fiktivny historicky graf ceny aktiv ${asset.name}">
+          <defs>
+            <linearGradient id="g-${assetId}-${range}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="${stroke}" stop-opacity=".22"/>
+              <stop offset="1" stop-color="${stroke}" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <text class="chart-title" x="54" y="15">Cena</text>
+          <text class="chart-title" x="372" y="204">Cas</text>
+          ${ticks.map((tick, index) => {
+            const y = top + index * (height / 3);
+            return `<line class="chart-grid" x1="${left}" y1="${y}" x2="${left + width}" y2="${y}"></line><text class="chart-label" x="6" y="${y + 4}">${formatMoney(tick)}</text>`;
+          }).join("")}
+          <line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"></line>
+          <line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left + width}" y2="${bottom}"></line>
+          ${xLabels.map((label, index) => {
+            const x = left + index * (width / 2);
+            return `<text class="chart-label" text-anchor="middle" x="${x}" y="188">${label}</text>`;
+          }).join("")}
+          <path d="${area}" fill="url(#g-${assetId}-${range})"></path>
+          <path d="${line}" fill="none" stroke="${stroke}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+          <circle cx="${points[points.length - 1][0].toFixed(1)}" cy="${points[points.length - 1][1].toFixed(1)}" r="4.8" fill="${stroke}"></circle>
+        </svg>
+      `;
+    }
+
+    function historySeries(assetId, range) {
+      const asset = byId[assetId];
+      const current = state.prices[assetId] || asset.basePrice;
+      const config = {
+        "1D": { count: 24, noise: .42, wave: .95 },
+        "5D": { count: 32, noise: .68, wave: 1.25 },
+        "1R": { count: 54, noise: 1.08, wave: 1.75 }
+      }[range] || { count: 32, noise: .68, wave: 1.25 };
+      const riskMultiplier = asset.risk === "vysoké" || asset.risk === "vysokÃ©" ? 1.55 : asset.risk === "stredné" || asset.risk === "strednÃ©" ? 1.08 : .72;
+      const sigma = Math.min(asset.basePrice * .32, Math.max(asset.basePrice * .018, 10 * config.noise * riskMultiplier));
+      const anchor = asset.basePrice + (seededUnit(`${assetId}-${range}-anchor`) - .5) * sigma;
+      let value = anchor;
+      const values = Array.from({ length: config.count }, (_, index) => {
+        const phase = (index / Math.max(1, config.count - 1)) * Math.PI * config.wave;
+        const noise = (seededUnit(`${assetId}-${range}-${index}`) - .5) * sigma;
+        const wave = Math.sin(phase + seeded(assetId) * Math.PI) * sigma * .45;
+        const pullToCurrent = index / Math.max(1, config.count - 1);
+        value = (value * .72) + ((anchor + wave + noise) * .28);
+        return Math.max(.05, (value * (1 - pullToCurrent)) + (current * pullToCurrent));
+      });
+      values[values.length - 1] = current;
+      return values.map(price => ({ price: roundMoney(price) }));
+    }
+    function renderBuy(assetId) {
+      const asset = byId[assetId];
+      const move = pctMove(assetId);
+      setTitle("Nákup");
+      root.innerHTML = `
+        <section class="screen">
+          <div class="card order-card">
+            <div class="order-head">
+              <div>
+                <p class="eyebrow">Zostatok</p>
+                <div class="amount" style="font-size:28px">${formatMoney(state.cash)}</div>
+              </div>
+              <div class="wallet-icon" aria-hidden="true">▣</div>
+            </div>
+            <div class="row" style="border-top:1px solid rgba(197,198,208,.48);border-bottom:0;padding-bottom:0">
+              <div>
+                <p class="eyebrow">Aktuálna cena</p>
+                <strong>${animatedPrice(state.prices[assetId])}</strong>
+                <span class="${move >= 0 ? "gain" : "loss"}" style="font-size:12px;font-weight:900;margin-left:6px">${move >= 0 ? "+" : ""}${move.toFixed(2)}%</span>
+              </div>
+              <svg class="mini-chart" viewBox="0 0 100 40" aria-hidden="true">
+                <path d="M0 35 Q 25 34, 48 17 T 100 6" fill="none" stroke="#4479ff" stroke-width="3" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="field section">
+            <label for="buyUnits">Počet jednotiek</label>
+            <div class="input-wrap">
+              <input id="buyUnits" class="input" type="number" min="0" step="0.0001" value="1" inputmode="decimal">
+              <span class="suffix">${asset.id}</span>
+            </div>
+          </div>
+
+          <div class="order-summary">
+            <div class="summary-box">
+              <p>Odhad. cena</p>
+              <strong id="buyEstimate"></strong>
+            </div>
+            <div class="summary-box">
+              <p>Poplatok</p>
+              <strong>0,00 €</strong>
+            </div>
+          </div>
+          <div class="order-total">
+            <span>Celková suma k úhrade</span>
+            <strong id="buyTotal"></strong>
+          </div>
+          <div id="buyNotice" class="notice err"></div>
+          <button id="confirmBuy" class="btn primary full section" type="button">Potvrdiť nákup <span aria-hidden="true">→</span></button>
+          <p class="legal">Potvrdením odošleš demo pokyn na nákup za aktuálnu fiktívnu cenu.</p>
+        </section>
+      `;
+      const input = root.querySelector("#buyUnits");
+      const total = root.querySelector("#buyTotal");
+      const estimate = root.querySelector("#buyEstimate");
+      const confirm = root.querySelector("#confirmBuy");
+      const update = () => {
+        const units = Number(input.value) || 0;
+        const cost = roundMoney(units * state.prices[assetId]);
+        total.textContent = formatMoney(cost);
+        estimate.textContent = formatMoney(cost);
+        confirm.disabled = units <= 0 || cost > state.cash;
+        const notice = root.querySelector("#buyNotice");
+        notice.className = cost > state.cash ? "notice err show" : "notice err";
+        notice.textContent = cost > state.cash ? "Nemáš dostatok hotovosti na nákup." : "";
+      };
+      input.addEventListener("input", update);
+      confirm.addEventListener("click", () => {
+        const units = Number(input.value) || 0;
+        const price = state.prices[assetId];
+        const cost = roundMoney(units * price);
+        if (units <= 0 || cost > state.cash) return update();
+        const old = state.holdings[assetId];
+        if (old) {
+          const totalUnits = old.units + units;
+          const avgPrice = ((old.units * old.avgPrice) + cost) / totalUnits;
+          state.holdings[assetId] = { id: assetId, units: totalUnits, avgPrice: roundMoney(avgPrice) };
+        } else {
+          state.holdings[assetId] = { id: assetId, units, avgPrice: price };
+        }
+        state.cash = roundMoney(state.cash - cost);
+        saveState();
+        historyStack = [];
+        showModal({
+          title: "Nákup úspešný",
+          text: "Hurá, kúpil si investíciu.",
+          button: "Späť na prehľad",
+          onClose: () => navigate({ screen: "dashboard" }, true)
+        });
+      });
+      update();
+    }
+
+    function renderSell(assetId) {
+      const asset = byId[assetId];
+      const holding = holdingFor(assetId);
+      if (!holding) return navigate({ screen: "detail", assetId }, true);
+      setTitle("Predaj");
+      root.innerHTML = `
+        <section class="screen">
+          <div class="card order-card">
+            <div class="row" style="border-bottom:0;align-items:end">
+              <div>
+                <p class="eyebrow">Aktuálna cena</p>
+                <div class="amount" style="font-size:28px;color:var(--blue)">${animatedPrice(state.prices[assetId])}</div>
+              </div>
+              <div style="text-align:right">
+                <p class="eyebrow">Vlastnené kusy</p>
+                <strong style="font-size:24px">${formatUnits(holding.units)}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="field section">
+            <label for="sellUnits">Počet jednotiek na predaj</label>
+            <div class="input-wrap">
+              <input id="sellUnits" class="input" type="number" min="0" max="${holding.units}" step="0.0001" value="${Math.min(1, holding.units)}" inputmode="decimal">
+              <button id="sellMax" class="suffix" style="border:0;background:transparent;color:var(--blue);font-weight:900" type="button">MAX</button>
+            </div>
+          </div>
+
+          <div class="card section" style="background:var(--card-soft)">
+            <h3 class="eyebrow">Rekapitulácia predaja</h3>
+            <div class="rows">
+              <div class="row"><span>Predajná hodnota</span><strong id="sellValue"></strong></div>
+              <div class="row"><span>Poplatok za obchod</span><strong>0,00 €</strong></div>
+              <div class="row"><span><strong>Celkový výnos</strong></span><strong id="sellTotal" style="color:var(--blue)"></strong></div>
+            </div>
+          </div>
+          <div id="sellNotice" class="notice err"></div>
+          <button id="confirmSell" class="btn primary full section" type="button">Potvrdiť predaj</button>
+          <p class="legal">Kliknutím na tlačidlo potvrdzuješ predaj aktíva za aktuálnu fiktívnu cenu.</p>
+        </section>
+      `;
+      const input = root.querySelector("#sellUnits");
+      const total = root.querySelector("#sellTotal");
+      const valueEl = root.querySelector("#sellValue");
+      const confirm = root.querySelector("#confirmSell");
+      root.querySelector("#sellMax").addEventListener("click", () => {
+        input.value = holding.units;
+        update();
+      });
+      const update = () => {
+        const units = Number(input.value) || 0;
+        const value = roundMoney(units * state.prices[assetId]);
+        total.textContent = formatMoney(value);
+        valueEl.textContent = formatMoney(value);
+        confirm.disabled = units <= 0 || units > holding.units;
+        const notice = root.querySelector("#sellNotice");
+        notice.className = units > holding.units ? "notice err show" : "notice err";
+        notice.textContent = units > holding.units ? "Nemôžeš predať viac jednotiek, ako vlastníš." : "";
+      };
+      input.addEventListener("input", update);
+      confirm.addEventListener("click", () => {
+        const units = Number(input.value) || 0;
+        if (units <= 0 || units > holding.units) return update();
+        const value = roundMoney(units * state.prices[assetId]);
+        const remaining = holding.units - units;
+        if (remaining <= 0.0000001) {
+          delete state.holdings[assetId];
+        } else {
+          state.holdings[assetId] = { ...holding, units: remaining };
+        }
+        state.cash = roundMoney(state.cash + value);
+        saveState();
+        historyStack = [];
+        showModal({
+          title: "Predaj úspešný",
+          text: "Investícia bola predaná.",
+          button: "Späť na prehľad",
+          onClose: () => navigate({ screen: "dashboard" }, true)
+        });
+      });
+      update();
+    }
+
+    function showModal({ title, text, button = "Pokračovať", icon = "✓", onClose }) {
+      modalIcon.textContent = icon;
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modalButton.textContent = button;
+      appModal.classList.add("show");
+      modalButton.focus();
+      modalButton.onclick = () => {
+        appModal.classList.remove("show");
+        if (typeof onClose === "function") onClose();
+      };
+    }
+
+    function showNotice(id, type, text) {
+      const notice = root.querySelector(`#${id}`);
+      if (!notice) return;
+      notice.className = `notice ${type} show`;
+      notice.textContent = text;
+    }
+
+    backBtn.addEventListener("click", back);
+    homeBtn.addEventListener("click", () => navigate({ screen: "dashboard" }));
+    navDashboard.addEventListener("click", () => {
+      if (state.transferredAmount > 0) navigate({ screen: "dashboard" });
+    });
+    navMarkets.addEventListener("click", () => {
+      if (state.transferredAmount > 0) navigate({ screen: "categories" });
+    });
+    navWallet.addEventListener("click", () => {
+      if (state.transferredAmount > 0) {
+        showModal({
+          title: "Peňaženka",
+          text: `Dostupná hotovosť na investičnom účte je ${formatMoney(state.cash)}.`,
+          button: "Rozumiem",
+          icon: "▣"
+        });
+      } else {
+        navigate({ screen: "salary" });
+      }
+    });
+    navReset.addEventListener("click", () => {
+      if (confirm("Resetovať demo reláciu?")) resetDemo();
+    });
+
+    render();
+    setInterval(tickPrices, PRICE_TICK_MS);
+  </script>
+</body>
+</html>
+
