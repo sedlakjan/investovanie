@@ -959,6 +959,86 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    .transfer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      background: rgba(0, 23, 75, .34);
+      backdrop-filter: blur(18px);
+    }
+    .transfer-overlay.show { display: grid; }
+    .transfer-panel {
+      width: min(100%, 360px);
+      min-height: 268px;
+      display: grid;
+      place-items: center;
+      gap: 14px;
+      text-align: center;
+      color: #071225;
+      background: rgba(255,255,255,.94);
+      border: 1px solid rgba(228,234,255,.9);
+      border-radius: 28px;
+      box-shadow: 0 28px 70px rgba(0, 23, 75, .28);
+      padding: 30px 26px;
+      animation: modalUp .2s ease-out;
+    }
+    .transfer-icon {
+      width: 74px;
+      height: 74px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      background: var(--card-soft);
+      color: var(--blue);
+      font-size: 34px;
+      font-weight: 950;
+    }
+    .transfer-spinner {
+      width: 42px;
+      height: 42px;
+      border: 5px solid rgba(68,121,255,.18);
+      border-top-color: var(--blue);
+      border-radius: 999px;
+      animation: spin .76s linear infinite;
+    }
+    .transfer-check,
+    .transfer-whoosh { display: none; }
+    .transfer-overlay.done .transfer-spinner,
+    .transfer-overlay.redirect .transfer-spinner { display: none; }
+    .transfer-overlay.done .transfer-check {
+      display: block;
+      color: var(--green);
+      animation: popCheck .28s ease-out;
+    }
+    .transfer-overlay.redirect .transfer-whoosh {
+      display: block;
+      color: var(--blue);
+      animation: whoosh .48s ease-in-out infinite alternate;
+    }
+    .transfer-title {
+      margin: 0;
+      font-size: 24px;
+      line-height: 1.1;
+      font-weight: 950;
+    }
+    .transfer-text {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+    @keyframes popCheck {
+      from { transform: scale(.72); opacity: .3; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes whoosh {
+      from { transform: translateX(-4px); opacity: .68; }
+      to { transform: translateX(5px); opacity: 1; }
+    }
+
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -1085,6 +1165,20 @@
       </div>
     </div>
 
+    <div id="transferOverlay" class="transfer-overlay" role="status" aria-live="polite" aria-atomic="true">
+      <div class="transfer-panel">
+        <div class="transfer-icon" aria-hidden="true">
+          <span class="transfer-spinner"></span>
+          <span class="transfer-check">✓</span>
+          <span class="transfer-whoosh">→</span>
+        </div>
+        <div>
+          <h2 class="transfer-title" id="transferTitle">Spracovávame platbu</h2>
+          <p class="transfer-text" id="transferText">Pripájame investičný účet a načítavame trhy.</p>
+        </div>
+      </div>
+    </div>
+
     <nav class="bottom-nav">
       <div class="bottom-nav-inner">
         <button class="nav-btn" id="navDashboard" type="button"><b>☰</b><span>Prehľad</span></button>
@@ -1205,6 +1299,9 @@
     const modalActions = document.getElementById("modalActions");
     const modalCancel = document.getElementById("modalCancel");
     const modalButton = document.getElementById("modalButton");
+    const transferOverlay = document.getElementById("transferOverlay");
+    const transferTitle = document.getElementById("transferTitle");
+    const transferText = document.getElementById("transferText");
 
     function defaultState() {
       const prices = {};
@@ -1461,6 +1558,53 @@
       if (route.screen === "sell") return renderSell(route.assetId);
     }
 
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function preloadImages(paths) {
+      return Promise.allSettled(paths.map(path => new Promise(resolve => {
+        const image = new Image();
+        image.onload = resolve;
+        image.onerror = resolve;
+        image.src = path;
+      })));
+    }
+
+    function preloadMarketAssets() {
+      const categoryImages = categories.map(cat => {
+        const meta = categoryMeta(cat.name);
+        return `assets/categories/${meta.image}`;
+      });
+      const newsImages = [...new Set(quickNews.map(news => `assets/news/${news.image}.png`))];
+      return preloadImages([...categoryImages, ...newsImages]);
+    }
+
+    function showTransferStep(step, title, text) {
+      transferOverlay.className = `transfer-overlay show ${step || ""}`.trim();
+      transferTitle.textContent = title;
+      transferText.textContent = text;
+    }
+
+    async function runTransferFlow(amount) {
+      root.querySelector("#sendMoneyBtn").disabled = true;
+      showTransferStep("", "Spracovávame platbu", "Pripájame investičný účet a načítavame trhy.");
+      const preload = preloadMarketAssets();
+      await Promise.all([preload, sleep(1050)]);
+
+      state.transferredAmount = roundMoney(amount);
+      state.cash = roundMoney(amount);
+      state.sessionStart = Date.now();
+      saveState();
+
+      showTransferStep("done", "Platba dorazila", "Peniaze sú pripravené na investičnom účte.");
+      await sleep(850);
+      showTransferStep("redirect", "Presmerovanie", "Otvárame investičný účet.");
+      await sleep(2000);
+      transferOverlay.className = "transfer-overlay";
+      navigate({ screen: "dashboard" }, true);
+    }
+
     function renderSalary() {
       setTitle("Osobný účet");
       root.innerHTML = `
@@ -1533,18 +1677,9 @@
           return;
         }
         pendingLargeTransfer = null;
-        root.querySelector("#sendMoneyBtn").disabled = true;
-        notice.className = "notice info show";
-        notice.innerHTML = `<span class="spinner" aria-hidden="true"></span><span>Spracovávame platbu...</span>`;
-        setTimeout(() => {
-          state.transferredAmount = roundMoney(amount);
-          state.cash = roundMoney(amount);
-          state.sessionStart = Date.now();
-          saveState();
-          notice.className = "notice ok show";
-          notice.innerHTML = `<span aria-hidden="true">✓</span><span>Platba dorazila na investičný účet.</span>`;
-          setTimeout(() => navigate({ screen: "dashboard" }, true), 800);
-        }, 800);
+        notice.className = "notice info";
+        notice.textContent = "";
+        runTransferFlow(amount);
       });
     }
 
