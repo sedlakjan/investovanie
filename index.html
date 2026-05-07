@@ -415,6 +415,7 @@
       color: var(--ink);
       outline: none;
     }
+  
     .input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(68,121,255,.14); }
     .field { display: grid; gap: 8px; }
     .field label { color: var(--muted); font-size: 12px; font-weight: 850; text-transform: uppercase; letter-spacing: .06em; }
@@ -479,14 +480,63 @@
     .search-box input::placeholder { color: #747b8f; }
     .category-card {
       position: relative;
-      min-height: 190px;
+      min-height: 260px;
       overflow: hidden;
       text-align: left;
       border: 1px solid rgba(228,234,255,.95);
       background: #fff;
       box-shadow: 0 9px 22px rgba(68,121,255,.075);
+      padding: 24px;
+      transition: transform .16s ease, box-shadow .16s ease;
     }
-    .category-card .cat-icon,
+    .category-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 34px rgba(68,121,255,.13);
+    }
+    .category-card:after {
+      content: "";
+      position: absolute;
+      right: -76px;
+      bottom: -86px;
+      width: 250px;
+      height: 250px;
+      border-radius: 999px;
+      opacity: .28;
+      pointer-events: none;
+    }
+    .category-card.stocks:after { background: radial-gradient(circle, rgba(33, 220, 139, .42), transparent 66%); }
+    .category-card.etf:after { background: radial-gradient(circle, rgba(68, 121, 255, .24), transparent 66%); }
+    .category-card.commodities:after { background: radial-gradient(circle, rgba(242, 201, 76, .42), transparent 66%); }
+    .category-card.crypto:after { background: radial-gradient(circle, rgba(88, 81, 216, .28), transparent 66%); }
+    .category-card .cat-watermark {
+      position: absolute;
+      right: -18px;
+      bottom: -18px;
+      z-index: 0;
+      color: #2f68ff;
+      opacity: .06;
+      font-size: 148px;
+      line-height: 1;
+      font-weight: 900;
+      transform: rotate(-4deg);
+      pointer-events: none;
+    }
+    .category-card.stocks .cat-watermark { color: #15b86f; }
+    .category-card.etf .cat-watermark { color: #4479ff; }
+    .category-card.commodities .cat-watermark { color: #d8a313; }
+    .category-card.crypto .cat-watermark { color: #5851d8; }
+    .cat-art {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: min(52%, 150px);
+      aspect-ratio: 1;
+      object-fit: contain;
+      margin: -8px 0 12px -8px;
+      filter: drop-shadow(0 16px 20px rgba(17,49,86,.12));
+      user-select: none;
+      pointer-events: none;
+    }
     .asset-icon,
     .detail-logo {
       display: grid;
@@ -495,21 +545,18 @@
       background: #dce2ff;
       font-weight: 900;
     }
-    .category-card .cat-icon {
-      width: 72px;
-      height: 72px;
-      border-radius: 22px;
-      font-size: 30px;
-      margin-bottom: 28px;
-    }
     .category-card .cat-title {
+      position: relative;
+      z-index: 1;
       margin: 0 0 8px;
-      font-size: 30px;
+      font-size: 36px;
       line-height: 1.05;
       color: #071225;
-      font-weight: 500;
+      font-weight: 900;
     }
     .category-card .cat-sub {
+      position: relative;
+      z-index: 1;
       margin: 0 0 34px;
       color: #737989;
       font-size: 14px;
@@ -518,6 +565,8 @@
       letter-spacing: .04em;
     }
     .category-card .cat-link {
+      position: relative;
+      z-index: 1;
       color: var(--blue);
       font-size: 20px;
       font-weight: 850;
@@ -526,21 +575,18 @@
       position: absolute;
       right: 30px;
       bottom: 36px;
+      z-index: 2;
+      display: grid;
+      place-items: center;
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 14px 28px rgba(17,49,86,.11);
       color: var(--blue);
-      font-size: 42px;
+      font-size: 38px;
       line-height: 1;
-      font-weight: 300;
-    }
-    .category-card .cat-watermark {
-      position: absolute;
-      right: -18px;
-      bottom: -12px;
-      color: #00174b;
-      opacity: .035;
-      font-size: 148px;
-      line-height: 1;
-      font-weight: 900;
-      transform: rotate(-2deg);
+      font-weight: 700;
     }
     .asset-list { gap: 12px; }
     .market-card {
@@ -789,6 +835,59 @@
       border: 1px dashed rgba(117,119,128,.45);
       border-radius: var(--radius);
     }
+    .news-card {
+      position: relative;
+      min-height: 168px;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(228,234,255,.82);
+      background: #071225;
+      box-shadow: 0 12px 28px rgba(17,49,86,.12);
+      color: #fff;
+      animation: newsSwap .34s ease-out;
+    }
+    @keyframes newsSwap {
+      from { opacity: .35; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .news-card:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(90deg, rgba(0,0,0,.74), rgba(0,0,0,.38) 54%, rgba(0,0,0,.1)), var(--news-bg);
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.02);
+    }
+    .news-content {
+      position: relative;
+      z-index: 1;
+      min-height: 168px;
+      display: grid;
+      align-content: end;
+      gap: 7px;
+      padding: 20px;
+    }
+    .news-kicker {
+      color: rgba(255,255,255,.78);
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .news-title {
+      margin: 0;
+      color: #fff;
+      font-size: clamp(21px, 6vw, 28px);
+      line-height: 1.08;
+      font-weight: 950;
+      text-shadow: 0 2px 14px rgba(0,0,0,.34);
+    }
+    .news-summary {
+      margin: 0;
+      color: rgba(255,255,255,.82);
+      font-size: 14px;
+      line-height: 1.35;
+      max-width: 34rem;
+    }
 
     .chart {
       width: 100%;
@@ -899,6 +998,14 @@
     }
     .modal h2 { margin-bottom: 8px; }
     .modal p { margin-bottom: 18px; }
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .modal-actions.confirm {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
     .bottom-nav {
       position: fixed;
@@ -971,15 +1078,18 @@
         <div class="modal-icon" id="modalIcon">✓</div>
         <h2 id="modalTitle">Hotovo</h2>
         <p id="modalText">Operácia prebehla úspešne.</p>
-        <button id="modalButton" class="btn primary full" type="button">Pokračovať</button>
+        <div class="modal-actions" id="modalActions">
+          <button id="modalCancel" class="btn soft full" type="button">Zrušiť</button>
+          <button id="modalButton" class="btn primary full" type="button">Pokračovať</button>
+        </div>
       </div>
     </div>
 
     <nav class="bottom-nav">
       <div class="bottom-nav-inner">
-        <button class="nav-btn" id="navDashboard" type="button"><b>▦</b><span>Prehľad</span></button>
-        <button class="nav-btn" id="navMarkets" type="button"><b>⌁</b><span>Trhy</span></button>
-        <button class="nav-btn" id="navWallet" type="button"><b>▣</b><span>Peňaženka</span></button>
+        <button class="nav-btn" id="navDashboard" type="button"><b>☰</b><span>Prehľad</span></button>
+        <button class="nav-btn" id="navMarkets" type="button"><b>↗</b><span>Investovať</span></button>
+        <button class="nav-btn" id="navWallet" type="button"><b>◫</b><span>Peňaženka</span></button>
         <button class="nav-btn" id="navReset" type="button"><b>↺</b><span>Reset</span></button>
       </div>
     </nav>
@@ -990,6 +1100,9 @@
     const DAY_MS = 24 * 60 * 60 * 1000;
     const SALARY = 1200;
     const PRICE_TICK_MS = 10000;
+    const NEWS_TICK_MS = 6500;
+    const USD_EUR_RATE = 0.93;
+    const CONVERSION_FEE_RATE = 0.01;
 
     const categories = [
       { id: "stocks", name: "Akcie", icon: "▦", volatility: 0.018 },
@@ -1045,11 +1158,28 @@
     ].map(([id, name, category, basePrice, description, risk, type], index) => ({
       id, name, category, basePrice, description, risk, type,
       issuer: ["BlueBridge", "Nova Capital", "Danube Funds", "Atlas Markets"][index % 4],
-      currency: "EUR",
+      currency: type !== "krypto" && index % 3 === 1 ? "USD" : "EUR",
       ter: type === "ETF" ? (0.07 + (index % 6) * 0.05).toFixed(2) + " %" : "none",
       dividend: type === "akcia" ? ["DIST", "none", "ACC"][index % 3] : type === "ETF" ? ["ACC", "DIST"][index % 2] : "none",
       replication: type === "ETF" ? ["physical", "synthetic"][index % 2] : "none"
     }));
+
+    const quickNews = [
+      ["Trhy reagujú na infláciu v USA", "Centrálna banka môže ponechať vysoké úrokové sadzby dlhšie, než investori očakávali.", "macro"],
+      ["Automobilka Elektro čelí kritike po teste nového modelu", "Investori reagujú na obavy o bezpečnosť a možné zdržanie predaja.", "industry"],
+      ["Sucho v Južnej Amerike ohrozuje úrodu kávy", "Analytici upozorňujú na možné zdražovanie komodít v najbližších mesiacoch.", "commodities"],
+      ["Technologické akcie oslabili po neistých výsledkoch firiem", "Trhy čakali silnejší rast a optimistickejšie prognózy.", "technology"],
+      ["Prezident centrálnej banky naznačil možné zníženie sadzieb", "Investori očakávajú lacnejšie úvery a podporu ekonomiky.", "macro"],
+      ["Cena ropy prudko vzrástla po prerušení ťažby", "Produkciu ovplyvnila silná búrka v Mexickom zálive.", "commodities"],
+      ["Kryptomeny oslabili po vlne výpredajov", "Trh zasiahla neistota a zvýšená volatilita investorov.", "technology"],
+      ["Výrobca čipov upozorňuje na možné problémy v dodávkach", "Technologický sektor sleduje situáciu s rastúcim napätím.", "technology"],
+      ["Investori sa obávajú spomalenia ekonomiky v Európe", "Firmy hlásia slabší dopyt a opatrnejšie očakávania.", "macro"],
+      ["Spoločnosť FutureAI oznámila veľkú investíciu do umelej inteligencie", "Akcie firmy reagovali prudkým rastom po zverejnení plánov.", "technology"],
+      ["Nezamestnanosť nečakane vzrástla", "Analytici upozorňujú na možné ochladenie ekonomiky.", "macro"],
+      ["Meme akcie opäť rastú po aktivite na sociálnych sieťach", "Trh sleduje zvýšený záujem drobných investorov.", "industry"],
+      ["Farmaceutická firma prerušila vývoj nového lieku", "Investori reagovali výrazným poklesom hodnoty akcií.", "industry"],
+      ["Jeden tweet znížil cenu akcie o 5 %", "CEO firmy zvažuje právne kroky po prudkej reakcii trhu.", "industry"]
+    ].map(([title, summary, image]) => ({ title, summary, image }));
 
     const byId = Object.fromEntries(assets.map(asset => [asset.id, asset]));
     let state = loadState();
@@ -1058,6 +1188,7 @@
     let selectedTransfer = 100;
     let selectedChartRange = "5D";
     let pendingLargeTransfer = null;
+    let selectedNewsIndex = 0;
 
     const root = document.getElementById("appRoot");
     const title = document.getElementById("screenTitle");
@@ -1071,6 +1202,8 @@
     const modalIcon = document.getElementById("modalIcon");
     const modalTitle = document.getElementById("modalTitle");
     const modalText = document.getElementById("modalText");
+    const modalActions = document.getElementById("modalActions");
+    const modalCancel = document.getElementById("modalCancel");
     const modalButton = document.getElementById("modalButton");
 
     function defaultState() {
@@ -1119,12 +1252,37 @@
       return ((hash >>> 0) % 100000) / 100000;
     }
 
-    function formatMoney(value) {
-      return new Intl.NumberFormat("sk-SK", { style: "currency", currency: "EUR", maximumFractionDigits: 2 }).format(Number(value) || 0);
+    function formatMoney(value, currency = "EUR") {
+      return new Intl.NumberFormat("sk-SK", { style: "currency", currency, maximumFractionDigits: 2 }).format(Number(value) || 0);
     }
 
-    function animatedPrice(value, className = "") {
-      const text = formatMoney(value);
+    function formatAssetMoney(asset, value) {
+      return formatMoney(value, asset.currency || "EUR");
+    }
+
+    function accountValue(asset, value) {
+      const amount = Number(value) || 0;
+      return asset.currency === "USD" ? roundMoney(amount * USD_EUR_RATE) : roundMoney(amount);
+    }
+
+    function conversionFee(asset, accountAmount) {
+      return asset.currency === "USD" ? roundMoney(accountAmount * CONVERSION_FEE_RATE) : 0;
+    }
+
+    function buyBreakdown(asset, units) {
+      const assetSubtotal = roundMoney((Number(units) || 0) * (state.prices[asset.id] || asset.basePrice));
+      const accountSubtotal = accountValue(asset, assetSubtotal);
+      const fee = conversionFee(asset, accountSubtotal);
+      return {
+        assetSubtotal,
+        accountSubtotal,
+        fee,
+        total: roundMoney(accountSubtotal + fee)
+      };
+    }
+
+    function animatedPrice(value, className = "", currency = "EUR") {
+      const text = formatMoney(value, currency);
       return `<span class="price-slot ${className}" aria-label="${text}"><span>${text}</span></span>`;
     }
 
@@ -1179,7 +1337,7 @@
         const detailPrice = root.querySelector(".detail-price");
         const detailChange = root.querySelector(".detail-change");
         const detailChart = root.querySelector(".detail-chart");
-        if (detailPrice) detailPrice.innerHTML = animatedPrice(state.prices[asset.id]);
+        if (detailPrice) detailPrice.innerHTML = animatedPrice(state.prices[asset.id], "", asset.currency);
         if (detailChange) {
           detailChange.classList.toggle("loss", move < 0);
           detailChange.innerHTML = `<span>${priceMoveMarkup(asset.id)}</span><small>Dnes</small>`;
@@ -1194,7 +1352,7 @@
           const price = card.querySelector(".market-price");
           if (!price) return;
           price.innerHTML = `
-            ${animatedPrice(state.prices[asset.id])}
+            ${animatedPrice(state.prices[asset.id], "", asset.currency)}
             <span class="market-change ${move >= 0 ? "gain" : "loss"}">${move >= 0 ? "↗ +" : "↘ "}${move.toFixed(2)}%</span>
           `;
         });
@@ -1210,12 +1368,27 @@
       route = nextRoute;
       movePrices();
       render();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      scrollToTop();
     }
 
     function back() {
       route = historyStack.pop() || (state.transferredAmount > 0 ? { screen: "dashboard" } : { screen: "salary" });
       render();
+      scrollToTop();
+    }
+
+    function scrollToTop() {
+      if (document.activeElement && typeof document.activeElement.blur === "function") {
+        document.activeElement.blur();
+      }
+      const reset = () => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      };
+      reset();
+      requestAnimationFrame(reset);
+      setTimeout(reset, 60);
     }
 
     function resetDemo() {
@@ -1229,7 +1402,8 @@
 
     function portfolioValue() {
       return Object.values(state.holdings).reduce((sum, holding) => {
-        return sum + holding.units * (state.prices[holding.id] || byId[holding.id].basePrice);
+        const asset = byId[holding.id];
+        return sum + accountValue(asset, holding.units * (state.prices[holding.id] || asset.basePrice));
       }, 0);
     }
 
@@ -1250,12 +1424,12 @@
 
     function categoryMeta(name) {
       const map = {
-        "Akcie": { icon: "⌁", sub: "Individuálne tituly", count: "2 400+", watermark: "⌁" },
-        "ETF": { icon: "◈", sub: "Diverzifikované koše", count: "850+", watermark: "◇" },
-        "Komodity": { icon: "◇", sub: "Suroviny a indexy", count: "120+", watermark: "◇" },
-        "Kryptomeny": { icon: "◆", sub: "Digitálne aktíva", count: "300+", watermark: "◆" }
+        "Akcie": { image: "stocks.png", sub: "Individuálne tituly", count: "2 400+", watermark: "↗" },
+        "ETF": { image: "etf.png", sub: "Diverzifikované koše", count: "850+", watermark: "◫" },
+        "Komodity": { image: "commodities.png", sub: "Suroviny a indexy", count: "120+", watermark: "⬡" },
+        "Kryptomeny": { image: "crypto.png", sub: "Digitálne aktíva", count: "300+", watermark: "◈" }
       };
-      return map[name] || { icon: "□", sub: "Investičná kategória", count: "100+", watermark: "□" };
+      return map[name] || { image: "stocks.png", sub: "Investičná kategória", count: "100+", watermark: "□" };
     }
 
     function pctMove(assetId) {
@@ -1288,13 +1462,13 @@
     }
 
     function renderSalary() {
-      setTitle("Prevod peňazí");
+      setTitle("Osobný účet");
       root.innerHTML = `
         <section class="screen">
           <div class="card hero">
-            <p class="eyebrow">Notifikácia</p>
+            <p class="eyebrow">Banková notifikácia</p>
             <h1>Prišla ti výplata: 1200 €</h1>
-            <p>Vaše prostriedky sú pripravené na prevod alebo investovanie.</p>
+            <p>Tvoje prostriedky sú k dispozícii.</p>
           </div>
 
           <div class="section">
@@ -1312,21 +1486,21 @@
           </div>
 
           <div class="card section">
-            <p class="eyebrow">Platobné údaje</p>
+            <p class="eyebrow">Platobné údaje tvojho investičného účtu u 5peňazíBroker a.s.</p>
             <div class="rows">
               <div class="row payment-row">
                 <span><span class="eyebrow" style="display:block;margin-bottom:2px">IBAN</span><strong>SK00 0000 0000 0000 1234 5678</strong></span>
-                <button class="copy-btn" type="button" aria-label="Kopírovať IBAN">□</button>
+                <button class="copy-btn" type="button" aria-label="Kopírovať IBAN">⧉</button>
               </div>
               <div class="row payment-row">
                 <span><span class="eyebrow" style="display:block;margin-bottom:2px">VS</span><strong>2026</strong></span>
-                <button class="copy-btn" type="button" aria-label="Kopírovať VS">□</button>
+                <button class="copy-btn" type="button" aria-label="Kopírovať VS">#</button>
               </div>
             </div>
           </div>
 
           <div id="transferNotice" class="notice info"></div>
-          <button id="sendMoneyBtn" class="btn dark full section" type="button">Poslať peniaze <span aria-hidden="true">→</span></button>
+          <button id="sendMoneyBtn" class="btn dark full section" type="button">Poslať peniaze na investičný účet <span aria-hidden="true">💸</span></button>
         </section>
       `;
 
@@ -1375,19 +1549,18 @@
     }
 
     function renderDashboard() {
-      setTitle("Prehľad účtu");
+      setTitle("Investičný účet");
       const investments = portfolioValue();
       const total = state.cash + investments;
       root.innerHTML = `
         <section class="screen">
           <div class="page-intro">
             <h2>Prehľad účtu</h2>
-            <p>Dnes je tvoj demo účet pripravený.</p>
           </div>
 
           <div class="card dark-card total-card">
             <div class="total-watermark" aria-hidden="true">⌁</div>
-            <p class="eyebrow">Celková hodnota účtu</p>
+            <p class="eyebrow">Celková hodnota účtu (hotovosť + investície)</p>
             <div class="amount">${formatMoney(total)}</div>
             <div class="toolbar" style="margin-top:12px">
               <span class="soft-badge">↗ +${investments > 0 ? "2,45" : "0,00"} %</span>
@@ -1403,8 +1576,8 @@
           <div class="action-stack section">
             <button id="investBtn" class="btn primary full action-btn" type="button"><span class="action-icon">＋</span>Investovať</button>
             <div class="action-pair">
-              <button id="withdrawBtn" class="btn ghost action-btn" type="button"><span class="action-icon">↙</span>Vybrať</button>
-              <button id="addMoneyBtn" class="btn ghost action-btn" type="button"><span class="action-icon">↗</span>Pridať</button>
+              <button id="withdrawBtn" class="btn ghost action-btn" type="button"><span class="action-icon">↙</span>Vybrať peniaze</button>
+              <button id="addMoneyBtn" class="btn ghost action-btn" type="button"><span class="action-icon">↗</span>Pridať peniaze</button>
             </div>
           </div>
           <div id="dashboardNotice" class="notice info"></div>
@@ -1416,16 +1589,24 @@
             </div>
             <div id="portfolioList"></div>
           </section>
+
+          <section class="section">
+            <div class="portfolio-head">
+              <h3>Rýchle správy</h3>
+            </div>
+            <div id="quickNews"></div>
+          </section>
         </section>
       `;
       root.querySelector("#investBtn").addEventListener("click", () => navigate({ screen: "categories" }));
-      root.querySelector("#addMoneyBtn").addEventListener("click", () => showNotice("dashboardNotice", "info", "Už nemáš viac peňazí na účte. Počkaj na ďalšiu výplatu."));
+      root.querySelector("#addMoneyBtn").addEventListener("click", () => showNotice("dashboardNotice", "info", "Už nemáš viac peňazí na osobnom účte. Počkaj na ďalšiu výplatu. V reaálnom živote si ich pošleš znova cez banku, alebo kartou, paypalom atď... \n\n Pozor ale na poplatky, niektoré spôsoby sú spoplatnené viac, niektoré menej."));
       root.querySelector("#withdrawBtn").addEventListener("click", withdrawCash);
       root.querySelector("#showAllPortfolio").addEventListener("click", () => {
         if (Object.values(state.holdings).length) return;
         showNotice("dashboardNotice", "info", "Portfólio je zatiaľ prázdne. Najprv si otvor kategóriu Investovať.");
       });
       renderPortfolioList();
+      renderQuickNews();
     }
 
     function withdrawCash() {
@@ -1458,7 +1639,7 @@
       list.innerHTML = `<div class="grid">${holdings.map(holding => {
         const asset = byId[holding.id];
         const currentPrice = state.prices[holding.id];
-        const currentValue = holding.units * currentPrice;
+        const currentValue = accountValue(asset, holding.units * currentPrice);
         const cost = holding.units * holding.avgPrice;
         const gain = currentValue - cost;
         const gainPct = cost ? gain / cost * 100 : 0;
@@ -1468,7 +1649,7 @@
             <div>
               <p class="portfolio-title">${asset.name}</p>
               <p class="portfolio-meta">${asset.category} · ${formatUnits(holding.units)} ks</p>
-              <p class="portfolio-meta">Priemer ${formatMoney(holding.avgPrice)} · Cena ${formatMoney(currentPrice)}</p>
+              <p class="portfolio-meta">Priemer ${formatMoney(holding.avgPrice)} · Cena ${formatAssetMoney(asset, currentPrice)}</p>
             </div>
             <div class="portfolio-value">
               ${formatMoney(currentValue)}
@@ -1480,6 +1661,27 @@
       list.querySelectorAll("[data-holding]").forEach(button => {
         button.addEventListener("click", () => navigate({ screen: "detail", assetId: button.dataset.holding }));
       });
+    }
+
+    function renderQuickNews() {
+      const wrap = root.querySelector("#quickNews");
+      if (!wrap) return;
+      const news = quickNews[selectedNewsIndex % quickNews.length];
+      wrap.innerHTML = `
+        <article class="news-card" style="--news-bg: url('assets/news/${news.image}.png')">
+          <div class="news-content">
+            <div class="news-kicker">Dnešné správy</div>
+            <h3 class="news-title">${news.title}</h3>
+            <p class="news-summary">${news.summary}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    function tickNews() {
+      if (route.screen !== "dashboard") return;
+      selectedNewsIndex = (selectedNewsIndex + 1) % quickNews.length;
+      renderQuickNews();
     }
 
     function renderCategories() {
@@ -1495,9 +1697,9 @@
             ${categories.map(cat => {
               const meta = categoryMeta(cat.name);
               return `
-              <button class="card category-card" data-category="${cat.name}" type="button">
+              <button class="card category-card ${cat.id}" data-category="${cat.name}" type="button">
                 <span class="cat-watermark" aria-hidden="true">${meta.watermark}</span>
-                <div class="cat-icon" aria-hidden="true">${meta.icon}</div>
+                <img class="cat-art" src="assets/categories/${meta.image}" alt="" loading="lazy" aria-hidden="true">
                 <div class="cat-title">${cat.name}</div>
                 <div class="cat-sub">${meta.sub}</div>
                 <div class="cat-link">Prezerať ${meta.count}</div>
@@ -1542,7 +1744,7 @@
                   <p class="ticker">${asset.category}: ${asset.id}</p>
                 </div>
                 <div class="market-price">
-                  ${animatedPrice(state.prices[asset.id])}
+                  ${animatedPrice(state.prices[asset.id], "", asset.currency)}
                   <span class="market-change ${move >= 0 ? "gain" : "loss"}">${move >= 0 ? "↗ +" : "↘ "}${move.toFixed(2)}%</span>
                 </div>
                 <p class="desc">${asset.description}</p>
@@ -1584,7 +1786,7 @@
                   <p>${asset.category} · ${asset.issuer}</p>
                 </div>
               </div>
-              <div class="detail-price">${animatedPrice(state.prices[asset.id])}</div>
+              <div class="detail-price">${animatedPrice(state.prices[asset.id], "", asset.currency)}</div>
               <div class="detail-change ${move >= 0 ? "" : "loss"}">
                 <span>${move >= 0 ? "↗ +" : "↘ "}${Math.abs(state.prices[asset.id] - asset.basePrice).toFixed(2)} (${move >= 0 ? "+" : ""}${move.toFixed(2)} %)</span>
                 <small>Dnes</small>
@@ -1613,7 +1815,7 @@
           </div>
 
           <div>
-            <details class="section" open>
+            <details class="section">
               <summary>Rozšírené informácie</summary>
               <div class="rows">
                 <div class="row"><span>TER</span><strong>${asset.ter}</strong></div>
@@ -1681,7 +1883,7 @@
           <text class="chart-title" x="372" y="204">Cas</text>
           ${ticks.map((tick, index) => {
             const y = top + index * (height / 3);
-            return `<line class="chart-grid" x1="${left}" y1="${y}" x2="${left + width}" y2="${y}"></line><text class="chart-label" x="6" y="${y + 4}">${formatMoney(tick)}</text>`;
+            return `<line class="chart-grid" x1="${left}" y1="${y}" x2="${left + width}" y2="${y}"></line><text class="chart-label" x="6" y="${y + 4}">${formatAssetMoney(asset, tick)}</text>`;
           }).join("")}
           <line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"></line>
           <line class="chart-axis" x1="${left}" y1="${bottom}" x2="${left + width}" y2="${bottom}"></line>
@@ -1736,8 +1938,9 @@
             <div class="row" style="border-top:1px solid rgba(197,198,208,.48);border-bottom:0;padding-bottom:0">
               <div>
                 <p class="eyebrow">Aktuálna cena</p>
-                <strong>${animatedPrice(state.prices[assetId])}</strong>
+                <strong>${animatedPrice(state.prices[assetId], "", asset.currency)}</strong>
                 <span class="${move >= 0 ? "gain" : "loss"}" style="font-size:12px;font-weight:900;margin-left:6px">${move >= 0 ? "+" : ""}${move.toFixed(2)}%</span>
+                ${asset.currency === "USD" ? `<p class="portfolio-meta" style="margin-top:6px">Účet je v EUR · kurz demo ${USD_EUR_RATE.toFixed(2)}</p>` : ""}
               </div>
               <svg class="mini-chart" viewBox="0 0 100 40" aria-hidden="true">
                 <path d="M0 35 Q 25 34, 48 17 T 100 6" fill="none" stroke="#4479ff" stroke-width="3" stroke-linecap="round"/>
@@ -1759,8 +1962,8 @@
               <strong id="buyEstimate"></strong>
             </div>
             <div class="summary-box">
-              <p>Poplatok</p>
-              <strong>0,00 €</strong>
+              <p id="buyFeeLabel">Poplatok</p>
+              <strong id="buyFee">0,00 €</strong>
             </div>
           </div>
           <div class="order-total">
@@ -1775,37 +1978,43 @@
       const input = root.querySelector("#buyUnits");
       const total = root.querySelector("#buyTotal");
       const estimate = root.querySelector("#buyEstimate");
+      const fee = root.querySelector("#buyFee");
+      const feeLabel = root.querySelector("#buyFeeLabel");
       const confirm = root.querySelector("#confirmBuy");
       const update = () => {
         const units = Number(input.value) || 0;
-        const cost = roundMoney(units * state.prices[assetId]);
-        total.textContent = formatMoney(cost);
-        estimate.textContent = formatMoney(cost);
-        confirm.disabled = units <= 0 || cost > state.cash;
+        const breakdown = buyBreakdown(asset, units);
+        total.textContent = formatMoney(breakdown.total);
+        estimate.textContent = asset.currency === "USD"
+          ? `${formatAssetMoney(asset, breakdown.assetSubtotal)} ≈ ${formatMoney(breakdown.accountSubtotal)}`
+          : formatMoney(breakdown.accountSubtotal);
+        fee.textContent = formatMoney(breakdown.fee);
+        feeLabel.textContent = asset.currency === "USD" ? "Poplatok za konverziu 1 %" : "Poplatok";
+        confirm.disabled = units <= 0 || breakdown.total > state.cash;
         const notice = root.querySelector("#buyNotice");
-        notice.className = cost > state.cash ? "notice err show" : "notice err";
-        notice.textContent = cost > state.cash ? "Nemáš dostatok hotovosti na nákup." : "";
+        notice.className = breakdown.total > state.cash ? "notice err show" : "notice err";
+        notice.textContent = breakdown.total > state.cash ? "Nemáš dostatok hotovosti na nákup vrátane poplatkov." : "";
       };
       input.addEventListener("input", update);
       confirm.addEventListener("click", () => {
         const units = Number(input.value) || 0;
         const price = state.prices[assetId];
-        const cost = roundMoney(units * price);
-        if (units <= 0 || cost > state.cash) return update();
+        const breakdown = buyBreakdown(asset, units);
+        if (units <= 0 || breakdown.total > state.cash) return update();
         const old = state.holdings[assetId];
         if (old) {
           const totalUnits = old.units + units;
-          const avgPrice = ((old.units * old.avgPrice) + cost) / totalUnits;
+          const avgPrice = ((old.units * old.avgPrice) + breakdown.total) / totalUnits;
           state.holdings[assetId] = { id: assetId, units: totalUnits, avgPrice: roundMoney(avgPrice) };
         } else {
-          state.holdings[assetId] = { id: assetId, units, avgPrice: price };
+          state.holdings[assetId] = { id: assetId, units, avgPrice: roundMoney(breakdown.total / units) };
         }
-        state.cash = roundMoney(state.cash - cost);
+        state.cash = roundMoney(state.cash - breakdown.total);
         saveState();
         historyStack = [];
         showModal({
           title: "Nákup úspešný",
-          text: "Hurá, kúpil si investíciu.",
+          text: "Kúpil si investíciu. Jej cena sa bude meniť. Krátkodobý pohyb ešte neznamená, že si sa rozhodol dobre alebo zle.",
           button: "Späť na prehľad",
           onClose: () => navigate({ screen: "dashboard" }, true)
         });
@@ -1824,7 +2033,7 @@
             <div class="row" style="border-bottom:0;align-items:end">
               <div>
                 <p class="eyebrow">Aktuálna cena</p>
-                <div class="amount" style="font-size:28px;color:var(--blue)">${animatedPrice(state.prices[assetId])}</div>
+                <div class="amount" style="font-size:28px;color:var(--blue)">${animatedPrice(state.prices[assetId], "", asset.currency)}</div>
               </div>
               <div style="text-align:right">
                 <p class="eyebrow">Vlastnené kusy</p>
@@ -1864,7 +2073,7 @@
       });
       const update = () => {
         const units = Number(input.value) || 0;
-        const value = roundMoney(units * state.prices[assetId]);
+        const value = accountValue(asset, units * state.prices[assetId]);
         total.textContent = formatMoney(value);
         valueEl.textContent = formatMoney(value);
         confirm.disabled = units <= 0 || units > holding.units;
@@ -1876,7 +2085,7 @@
       confirm.addEventListener("click", () => {
         const units = Number(input.value) || 0;
         if (units <= 0 || units > holding.units) return update();
-        const value = roundMoney(units * state.prices[assetId]);
+        const value = accountValue(asset, units * state.prices[assetId]);
         const remaining = holding.units - units;
         if (remaining <= 0.0000001) {
           delete state.holdings[assetId];
@@ -1888,7 +2097,7 @@
         historyStack = [];
         showModal({
           title: "Predaj úspešný",
-          text: "Investícia bola predaná.",
+          text: "V reálnom živote je dobré vedieť, či predávaš podľa plánu, alebo len preto, že sa zmenila cena.",
           button: "Späť na prehľad",
           onClose: () => navigate({ screen: "dashboard" }, true)
         });
@@ -1896,15 +2105,25 @@
       update();
     }
 
-    function showModal({ title, text, button = "Pokračovať", icon = "✓", onClose }) {
+    function showModal({ title, text, button = "Pokračovať", icon = "✓", onClose, cancelButton = null, buttonClass = "primary" }) {
       modalIcon.textContent = icon;
       modalTitle.textContent = title;
       modalText.textContent = text;
       modalButton.textContent = button;
+      modalButton.className = `btn ${buttonClass} full`;
+      modalCancel.style.display = cancelButton ? "" : "none";
+      modalCancel.textContent = cancelButton || "Zrušiť";
+      modalActions.classList.toggle("confirm", Boolean(cancelButton));
       appModal.classList.add("show");
+      const close = () => {
+        appModal.classList.remove("show");
+        modalActions.classList.remove("confirm");
+        modalCancel.style.display = "none";
+      };
+      modalCancel.onclick = close;
       modalButton.focus();
       modalButton.onclick = () => {
-        appModal.classList.remove("show");
+        close();
         if (typeof onClose === "function") onClose();
       };
     }
@@ -1937,12 +2156,20 @@
       }
     });
     navReset.addEventListener("click", () => {
-      if (confirm("Resetovať demo reláciu?")) resetDemo();
+      showModal({
+        title: "Resetovať demo účet?",
+        text: "Vymaže sa hotovosť, portfólio aj aktuálne demo ceny. Začneš od osobného účtu s výplatou.",
+        button: "Resetovať",
+        cancelButton: "Nechať tak",
+        buttonClass: "danger",
+        icon: "↺",
+        onClose: resetDemo
+      });
     });
 
     render();
     setInterval(tickPrices, PRICE_TICK_MS);
+    setInterval(tickNews, NEWS_TICK_MS);
   </script>
 </body>
 </html>
-
