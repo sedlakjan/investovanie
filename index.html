@@ -40,7 +40,7 @@
 
     button, input, select { font: inherit; }
     button { cursor: pointer; }
-    .app { min-height: 100dvh; padding-bottom: 92px; }
+    .app { min-height: 100dvh; padding-bottom: 126px; }
     .topbar {
       position: sticky;
       top: 0;
@@ -1078,6 +1078,36 @@
     }
     .modal h2 { margin-bottom: 8px; }
     .modal p { margin-bottom: 18px; }
+    .modal-field {
+      display: grid;
+      gap: 8px;
+      margin: 14px 0 16px;
+    }
+    .modal-field label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .modal-field input {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 16px;
+      border: 1px solid rgba(117,119,128,.38);
+      padding: 0 14px;
+      color: var(--ink);
+      font-size: 20px;
+      font-weight: 850;
+      outline: 0;
+    }
+    .modal-error {
+      min-height: 18px;
+      margin: 0;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 850;
+    }
     .modal-actions {
       display: grid;
       grid-template-columns: 1fr;
@@ -1100,7 +1130,7 @@
     .bottom-nav-inner {
       width: min(100%, 720px);
       margin: 0 auto;
-      padding: 10px 12px 18px;
+      padding: 10px 12px 6px;
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 8px;
@@ -1119,6 +1149,29 @@
     }
     .nav-btn b { font-size: 20px; line-height: 1; }
     .nav-btn.active { background: var(--card-soft); color: var(--blue); }
+    .education-footer {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: 0 12px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #6b7280;
+      font-size: 10px;
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .education-logo {
+      height: 18px;
+      width: auto;
+      max-width: 96px;
+      padding: 4px 7px;
+      border-radius: 999px;
+      background: #071225;
+      object-fit: contain;
+    }
 
     .toolbar {
       display: flex;
@@ -1185,6 +1238,10 @@
         <button class="nav-btn" id="navMarkets" type="button"><b>↗</b><span>Investovať</span></button>
         <button class="nav-btn" id="navWallet" type="button"><b>◫</b><span>Peňaženka</span></button>
         <button class="nav-btn" id="navReset" type="button"><b>↺</b><span>Reset</span></button>
+      </div>
+      <div class="education-footer">
+        <span>Education purpose only</span>
+        <img class="education-logo" src="assets/logo.png" alt="5peňazí NBS">
       </div>
     </nav>
   </div>
@@ -1513,6 +1570,49 @@
     }
 
     function iconForAsset(asset) {
+      const map = {
+        TBAN: "🚀",
+        GCAR: "⚡",
+        FOOD: "▤",
+        BMAX: "◆",
+        MEDP: "✚",
+        SPCY: "✦",
+        SHOP: "◫",
+        ENFL: "↯",
+        GAME: "🎮",
+        CLDN: "☁",
+        W500: "◎",
+        EGRW: "↟",
+        FTEC: "✦",
+        DMIX: "◫",
+        SAFE: "◌",
+        EMKT: "◍",
+        CENE: "↯",
+        HLTH: "✚",
+        REST: "⌂",
+        GBAL: "◉",
+        GOLD: "▣",
+        SILV: "◇",
+        OILK: "◒",
+        GASX: "≈",
+        WHEA: "✶",
+        COPR: "⬡",
+        COFF: "◖",
+        CORN: "✦",
+        LITX: "⬢",
+        WATR: "≋",
+        BTKR: "◉",
+        ETHK: "⬢",
+        MPES: "✹",
+        STEU: "◌",
+        CHBX: "▧",
+        GRBL: "⬡",
+        FAST: "↯",
+        PRVC: "◍",
+        META: "✦",
+        GMCO: "◆"
+      };
+      if (map[asset.id]) return map[asset.id];
       if (asset.category === "Akcie") return "↗";
       if (asset.category === "ETF") return "◈";
       if (asset.category === "Komodity") return asset.id === "GOLD" ? "▣" : "◇";
@@ -1670,6 +1770,12 @@
           notice.textContent = "Zadaj sumu od 1 € do 1200 €.";
           return;
         }
+        if (amount > SALARY * 0.6) {
+          pendingLargeTransfer = null;
+          notice.className = "notice err show";
+          notice.textContent = "Kámo, treba aj z niečoho žiť. Zníž sumu, ktorú investuješ";
+          return;
+        }
         if (amount > SALARY * 0.3 && pendingLargeTransfer !== amount) {
           pendingLargeTransfer = amount;
           notice.className = "notice err show";
@@ -1734,7 +1840,7 @@
         </section>
       `;
       root.querySelector("#investBtn").addEventListener("click", () => navigate({ screen: "categories" }));
-      root.querySelector("#addMoneyBtn").addEventListener("click", () => showNotice("dashboardNotice", "info", "Už nemáš viac peňazí na osobnom účte. Počkaj na ďalšiu výplatu. V reaálnom živote si ich pošleš znova cez banku, alebo kartou, paypalom atď... \n\n Pozor ale na poplatky, niektoré spôsoby sú spoplatnené viac, niektoré menej."));
+      root.querySelector("#addMoneyBtn").addEventListener("click", () => showNotice("dashboardNotice", "info", "Už nemáš viac peňazí na osobnom účte. Počkaj na ďalšiu výplatu.<br>V bežnom živote si ich vieš poslať cez banku, kartou, paypalom atď...<br>Pozor ale na poplatky, niektoré spôsoby sú spoplatnené viac, iné menej.", true));
       root.querySelector("#withdrawBtn").addEventListener("click", withdrawCash);
       root.querySelector("#showAllPortfolio").addEventListener("click", () => {
         if (Object.values(state.holdings).length) return;
@@ -1750,18 +1856,7 @@
         showNotice("dashboardNotice", "err", "Na výber nemáš dostupnú hotovosť.");
         return;
       }
-      const value = prompt(`Koľko chceš vybrať? Dostupné: ${formatMoney(state.cash)}`, String(Math.floor(state.cash)));
-      if (value === null) return;
-      const amount = roundMoney(Number(String(value).replace(",", ".")));
-      if (!amount || amount <= 0 || amount > state.cash) {
-        notice.className = "notice err show";
-        notice.textContent = "Zadaj platnú sumu najviac do výšky dostupnej hotovosti.";
-        return;
-      }
-      state.cash = roundMoney(state.cash - amount);
-      saveState();
-      renderDashboard();
-      showNotice("dashboardNotice", "ok", `Vybral si ${formatMoney(amount)}.`);
+      showWithdrawModal();
     }
 
     function renderPortfolioList() {
@@ -1805,7 +1900,7 @@
       wrap.innerHTML = `
         <article class="news-card" style="--news-bg: url('assets/news/${news.image}.png')">
           <div class="news-content">
-            <div class="news-kicker">Dnešné správy</div>
+            <div class="news-kicker">Práve sa stalo</div>
             <h3 class="news-title">${news.title}</h3>
             <p class="news-summary">${news.summary}</p>
           </div>
@@ -2263,11 +2358,63 @@
       };
     }
 
-    function showNotice(id, type, text) {
+    function closeModal() {
+      appModal.classList.remove("show");
+      modalActions.classList.remove("confirm");
+      modalCancel.style.display = "none";
+    }
+
+    function showWithdrawModal() {
+      modalIcon.textContent = "↙";
+      modalTitle.textContent = "Vybrať peniaze";
+      modalText.innerHTML = `
+        <span>Dostupná hotovosť na investičnom účte je <strong>${formatMoney(state.cash)}</strong>.</span>
+        <span class="modal-field">
+          <label for="withdrawAmount">Suma na výber</label>
+          <input id="withdrawAmount" type="number" min="1" max="${state.cash}" step="1" inputmode="decimal" value="${Math.floor(state.cash)}">
+          <span id="withdrawError" class="modal-error"></span>
+        </span>
+      `;
+      modalButton.textContent = "Vybrať";
+      modalButton.className = "btn primary full";
+      modalCancel.style.display = "";
+      modalCancel.textContent = "Zrušiť";
+      modalActions.classList.add("confirm");
+      appModal.classList.add("show");
+      const input = modalText.querySelector("#withdrawAmount");
+      const error = modalText.querySelector("#withdrawError");
+      const submit = () => {
+        const amount = roundMoney(Number(String(input.value).replace(",", ".")));
+        if (!amount || amount <= 0 || amount > state.cash) {
+          error.textContent = "Zadaj platnú sumu najviac do výšky dostupnej hotovosti.";
+          input.focus();
+          return;
+        }
+        state.cash = roundMoney(state.cash - amount);
+        saveState();
+        closeModal();
+        renderDashboard();
+        showNotice("dashboardNotice", "ok", `Vybral si ${formatMoney(amount)}.`);
+      };
+      modalCancel.onclick = closeModal;
+      modalButton.onclick = submit;
+      input.addEventListener("input", () => { error.textContent = ""; });
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") submit();
+      });
+      input.focus();
+      input.select();
+    }
+
+    function showNotice(id, type, text, html = false) {
       const notice = root.querySelector(`#${id}`);
       if (!notice) return;
       notice.className = `notice ${type} show`;
-      notice.textContent = text;
+      if (html) {
+        notice.innerHTML = text;
+      } else {
+        notice.textContent = text;
+      }
     }
 
     backBtn.addEventListener("click", back);
