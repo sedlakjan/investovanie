@@ -155,6 +155,42 @@
     .dark-card p { color: rgba(255,255,255,.74); }
     .stat-card p { margin-bottom: 8px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
     .stat-card strong { display: block; font-size: 22px; }
+    .stat-card.actionable {
+      width: 100%;
+      min-height: 134px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-topline {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .stat-mini-chart {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 10px;
+      height: 46px;
+      opacity: .92;
+    }
+    .stat-mini-chart svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .stat-mini-chart .account-line {
+      fill: none;
+      stroke: var(--blue);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .stat-mini-chart .account-area { fill: rgba(68,121,255,.12); }
     .page-intro {
       margin-bottom: 22px;
     }
@@ -169,12 +205,20 @@
       font-size: 14px;
     }
     .total-card {
-      min-height: 154px;
-      padding: 24px;
+      min-height: 272px;
+      width: 100%;
+      padding: 28px 22px 20px;
+      display: grid;
+      justify-items: center;
+      text-align: center;
+      text-decoration: none;
+      isolation: isolate;
     }
     .total-card .amount {
-      font-size: 32px;
+      font-size: clamp(44px, 13vw, 68px);
       line-height: 1.2;
+      position: relative;
+      z-index: 1;
     }
     .total-watermark {
       position: absolute;
@@ -195,6 +239,42 @@
       color: #39d987;
       font-size: 12px;
       font-weight: 900;
+    }
+    .soft-badge.loss {
+      background: #fff0f0;
+      color: var(--red);
+    }
+    .account-chart {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 520px);
+      height: 128px;
+      margin-top: 16px;
+      color: #fff;
+    }
+    .account-chart svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+    }
+    .account-chart .chart-grid { stroke: rgba(255,255,255,.12); }
+    .account-chart .account-line {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 8px 16px rgba(0,0,0,.22));
+    }
+    .account-chart .account-area { fill: rgba(255,255,255,.12); }
+    .account-chart-card {
+      min-height: 300px;
+      padding: 18px;
+    }
+    .account-chart-card .chart {
+      height: 260px;
+      margin-top: 10px;
     }
     .action-stack {
       display: grid;
@@ -501,20 +581,21 @@
       width: 250px;
       height: 250px;
       border-radius: 999px;
-      opacity: .28;
+      opacity: .42;
       pointer-events: none;
     }
     .category-card.stocks:after { background: radial-gradient(circle, rgba(33, 220, 139, .42), transparent 66%); }
     .category-card.etf:after { background: radial-gradient(circle, rgba(68, 121, 255, .24), transparent 66%); }
     .category-card.commodities:after { background: radial-gradient(circle, rgba(242, 201, 76, .42), transparent 66%); }
     .category-card.crypto:after { background: radial-gradient(circle, rgba(88, 81, 216, .28), transparent 66%); }
+    .category-card.bonds:after { background: radial-gradient(circle, rgba(19, 138, 77, .26), transparent 66%); }
     .category-card .cat-watermark {
       position: absolute;
-      right: -18px;
-      bottom: -18px;
+      right: 52px;
+      bottom: 42px;
       z-index: 0;
       color: #2f68ff;
-      opacity: .06;
+      opacity: .055;
       font-size: 148px;
       line-height: 1;
       font-weight: 900;
@@ -525,6 +606,7 @@
     .category-card.etf .cat-watermark { color: #4479ff; }
     .category-card.commodities .cat-watermark { color: #d8a313; }
     .category-card.crypto .cat-watermark { color: #5851d8; }
+    .category-card.bonds .cat-watermark { color: #138a4d; }
     .cat-art {
       position: relative;
       z-index: 1;
@@ -536,6 +618,13 @@
       filter: drop-shadow(0 16px 20px rgba(17,49,86,.12));
       user-select: none;
       pointer-events: none;
+    }
+    .category-card.bonds .cat-art {
+      width: min(54%, 156px);
+      margin: -16px 0 28px -42px;
+      transform: scale(1.72);
+      transform-origin: left top;
+      filter: drop-shadow(0 18px 26px rgba(19,138,77,.18)) drop-shadow(0 12px 18px rgba(68,121,255,.14));
     }
     .asset-icon,
     .detail-logo {
@@ -612,6 +701,7 @@
       font-size: 16px;
       color: #313848;
     }
+
     .market-card .ticker {
       margin: 0 0 12px;
       color: #6d7484;
@@ -825,6 +915,21 @@
     .tag.low { background: #e9f8ef; color: #0f6f3d; }
     .tag.mid { background: #fff5d8; color: #7a5200; }
     .tag.high { background: #fff0f0; color: #9f2a2a; }
+    .asset-tags {
+      grid-column: 2 / 4;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: -2px;
+    }
+    .mini-tag {
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: #f4f6ff;
+      color: #4c5568;
+      font-size: 11px;
+      font-weight: 850;
+    }
     .gain { color: var(--green); font-weight: 900; }
     .loss { color: var(--red); font-weight: 900; }
     .empty {
@@ -943,6 +1048,33 @@
     .notice.info { background: var(--card-soft); color: var(--blue-dark); }
     .notice.ok { background: #eaf8ef; color: #0f6f3d; }
     .notice.err { background: #fff0f0; color: #9f2a2a; }
+    .buy-converter {
+      display: grid;
+      gap: 10px;
+    }
+    .buy-converter.swapped .unit-field { order: 3; }
+    .buy-converter.swapped .swap-icon { order: 2; }
+    .buy-converter.swapped .amount-field { order: 1; }
+    .swap-icon {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(68,121,255,.2);
+      border-radius: 999px;
+      margin: -1px auto;
+      background: #fff;
+      color: var(--blue);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      line-height: 1;
+      box-shadow: 0 8px 18px rgba(17,49,86,.08);
+    }
+    button.swap-icon {
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+    }
+    button.swap-icon:active { transform: scale(.96); }
+    button.swap-icon:hover { background: var(--card-soft); border-color: rgba(68,121,255,.34); }
 
     .spinner {
       width: 20px;
@@ -1253,28 +1385,31 @@
     const PRICE_TICK_MS = 10000;
     const NEWS_TICK_MS = 6500;
     const USD_EUR_RATE = 0.93;
+    const CHF_EUR_RATE = 1.04;
     const CONVERSION_FEE_RATE = 0.01;
+    const INVESTMENT_LIMIT = SALARY * 0.3;
 
     const categories = [
       { id: "stocks", name: "Akcie", icon: "▦", volatility: 0.018 },
-      { id: "etf", name: "ETF", icon: "◫", volatility: 0.007 },
+      { id: "etf", name: "Fondy", assetCategory: "ETF", icon: "◫", volatility: 0.007 },
+      { id: "bonds", name: "Dlhopisy", icon: "▤", volatility: 0.006 },
       { id: "commodities", name: "Komodity", icon: "◇", volatility: 0.026 },
-      { id: "crypto", name: "Kryptomeny", icon: "◆", volatility: 0.055 }
+      { id: "crypto", name: "Kryptoaktíva", assetCategory: "Kryptomeny", icon: "◆", volatility: 0.055 }
     ];
 
     const assets = [
-      ["TBAN", "TechBanana", "Akcie", 148, "Technologická spoločnosť so spotrebnou elektronikou.", "vysoké", "akcia"],
+      ["TBAN", "TechBanana", "Akcie", 84, "Technologická spoločnosť so spotrebnou elektronikou.", "vysoké", "akcia"],
       ["GCAR", "GreenCar", "Akcie", 72, "Výrobca mestských elektrických áut.", "vysoké", "akcia"],
       ["FOOD", "Foodo", "Akcie", 34, "Sieť rýchleho rozvozu potravín.", "stredné", "akcia"],
       ["BMAX", "BankoMax", "Akcie", 96, "Digitálna banka pre retailových klientov.", "stredné", "akcia"],
-      ["MEDP", "MedicaPlus", "Akcie", 121, "Zdravotnícka firma s diagnostickými službami.", "stredné", "akcia"],
+      ["MEDP", "MedicaPlus", "Akcie", 92, "Zdravotnícka firma s diagnostickými službami.", "stredné", "akcia"],
       ["SPCY", "SpaceYard", "Akcie", 58, "Vývoj satelitných a logistických riešení.", "vysoké", "akcia"],
       ["SHOP", "Shopster", "Akcie", 87, "Online marketplace pre malé značky.", "stredné", "akcia"],
       ["ENFL", "EnergyFlow", "Akcie", 46, "Prevádzkovateľ moderných energetických sietí.", "stredné", "akcia"],
       ["GAME", "GameForge", "Akcie", 29, "Herné štúdio so živými online titulmi.", "vysoké", "akcia"],
-      ["CLDN", "CloudNine", "Akcie", 164, "Cloudová infraštruktúra pre firmy.", "stredné", "akcia"],
+      ["CLDN", "CloudNine", "Akcie", 99, "Cloudová infraštruktúra pre firmy.", "stredné", "akcia"],
 
-      ["W500", "World500 ETF", "ETF", 112, "Široký fond sledujúci veľké svetové firmy.", "nízke", "ETF"],
+      ["W500", "World500 ETF", "ETF", 86, "Široký fond sledujúci veľké svetové firmy.", "nízke", "ETF"],
       ["EGRW", "EuroGrowth ETF", "ETF", 54, "Fond zameraný na európske rastové firmy.", "stredné", "ETF"],
       ["FTEC", "FutureTech ETF", "ETF", 76, "Technologický fond s vyšším rastovým profilom.", "stredné", "ETF"],
       ["DMIX", "DividendMix ETF", "ETF", 42, "Fond zameraný na dividendové spoločnosti.", "nízke", "ETF"],
@@ -1285,7 +1420,28 @@
       ["REST", "RealEstate ETF", "ETF", 25, "Fond realitných spoločností.", "stredné", "ETF"],
       ["GBAL", "GlobalBalance ETF", "ETF", 49, "Vyvážený fond naprieč regiónmi.", "nízke", "ETF"],
 
-      ["GOLD", "Goldík", "Komodity", 184, "Fiktívny nástroj sledujúci cenu zlata.", "stredné", "komodita"],
+      ["SB28", "SlovBond 2028", "Dlhopisy", 101, "Štátny dlhopis so splatnosťou v roku 2028.", "nízke", "dlhopis", { coupon: "2.1 %", maturity: "2028", bondType: "Štátny", currency: "EUR", couponType: "Fixný", rating: "AAA", liquidity: "Vysoká", minInvestment: "10 €", issuer: "štát", volatility: "nízka" }],
+      ["ES30", "EuroSafe 2030", "Dlhopisy", 98, "Konzervatívny štátny dlhopis v mene euro.", "nízke", "dlhopis", { coupon: "3.0 %", maturity: "2030", bondType: "Štátny", currency: "EUR", couponType: "Fixný", rating: "AAA", liquidity: "Vysoká", minInvestment: "10 €", issuer: "štát", volatility: "nízka" }],
+      ["GFB32", "GreenFuture Bond", "Dlhopisy", 95, "Zelený dlhopis financujúci udržateľné projekty.", "stredné", "dlhopis", { coupon: "4.2 %", maturity: "2032", bondType: "Zelený", currency: "EUR", couponType: "Fixný", rating: "BBB", liquidity: "Vysoká", minInvestment: "10 €", issuer: "firma", volatility: "stredná" }],
+      ["NE29", "Nova Energy 2029", "Dlhopisy", 92, "Firemný energetický dlhopis so stredným rizikom.", "stredné", "dlhopis", { coupon: "5.1 %", maturity: "2029", bondType: "Firemný", currency: "EUR", couponType: "Variabilný", rating: "BBB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "stredná" }],
+      ["CR35", "CityRail 2035", "Dlhopisy", 88, "Infraštruktúrny dlhopis pre mestskú dopravu.", "stredné", "dlhopis", { coupon: "5.8 %", maturity: "2035", bondType: "Infraštruktúra", currency: "EUR", couponType: "Fixný", rating: "BBB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "stredná" }],
+      ["TGN31", "TechGrowth Note", "Dlhopisy", 84, "Dolárový firemný dlhopis technologickej firmy.", "vyššie", "dlhopis", { coupon: "6.9 %", maturity: "2031", bondType: "Firemný", currency: "USD", couponType: "Variabilný", rating: "BB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "vysoká" }],
+      ["ABB27", "Alpine Bank Bond", "Dlhopisy", 99, "Bankový dlhopis denominovaný vo švajčiarskych frankoch.", "nízke", "dlhopis", { coupon: "2.7 %", maturity: "2027", bondType: "Bankový", currency: "CHF", couponType: "Fixný", rating: "AAA", liquidity: "Vysoká", minInvestment: "10 €", issuer: "banka", volatility: "nízka" }],
+      ["BP33", "Baltic Port 2033", "Dlhopisy", 90, "Firemný dlhopis naviazaný na logistiku a prístavy.", "stredné", "dlhopis", { coupon: "5.0 %", maturity: "2033", bondType: "Firemný", currency: "EUR", couponType: "Fixný", rating: "BBB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "stredná" }],
+      ["FM34", "Future Mobility", "Dlhopisy", 82, "Dolárový dlhopis pre projekty mobility.", "vyššie", "dlhopis", { coupon: "7.2 %", maturity: "2034", bondType: "Firemný", currency: "USD", couponType: "Variabilný", rating: "BB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "vysoká" }],
+      ["SHB29", "Secure Home Bond", "Dlhopisy", 97, "Realitný dlhopis s nižším rizikovým profilom.", "nízke", "dlhopis", { coupon: "3.4 %", maturity: "2029", bondType: "Reality", currency: "EUR", couponType: "Fixný", rating: "AAA", liquidity: "Vysoká", minInvestment: "10 €", issuer: "firma", volatility: "nízka" }],
+      ["SG36", "SolarGrid 2036", "Dlhopisy", 79, "Zelený dlhopis pre solárnu infraštruktúru.", "vyššie", "dlhopis", { coupon: "8.0 %", maturity: "2036", bondType: "Zelený", currency: "EUR", couponType: "Variabilný", rating: "BB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "vysoká" }],
+      ["AE30", "Aqua Europe", "Dlhopisy", 94, "Dlhopis verejných služieb zameraný na vodnú infraštruktúru.", "stredné", "dlhopis", { coupon: "4.0 %", maturity: "2030", bondType: "Verejné služby", currency: "EUR", couponType: "Fixný", rating: "BBB", liquidity: "Vysoká", minInvestment: "10 €", issuer: "firma", volatility: "stredná" }],
+      ["HT32", "Horizon Telecom", "Dlhopisy", 87, "Firemný telekomunikačný dlhopis.", "stredné", "dlhopis", { coupon: "5.9 %", maturity: "2032", bondType: "Firemný", currency: "EUR", couponType: "Fixný", rating: "BBB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "stredná" }],
+      ["MTP31", "MedTech Plus", "Dlhopisy", 83, "Dolárový firemný dlhopis zdravotníckej firmy.", "vyššie", "dlhopis", { coupon: "6.7 %", maturity: "2031", bondType: "Firemný", currency: "USD", couponType: "Variabilný", rating: "BB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "vysoká" }],
+      ["NS26", "Nordic Stability", "Dlhopisy", 102, "Krátky štátny dlhopis s konzervatívnym profilom.", "nízke", "dlhopis", { coupon: "1.9 %", maturity: "2026", bondType: "Štátny", currency: "EUR", couponType: "Fixný", rating: "AAA", liquidity: "Vysoká", minInvestment: "10 €", issuer: "štát", volatility: "nízka" }],
+      ["MB34", "MetroBuild Bond", "Dlhopisy", 89, "Infraštruktúrny dlhopis pre výstavbu metra.", "stredné", "dlhopis", { coupon: "5.5 %", maturity: "2034", bondType: "Infraštruktúra", currency: "EUR", couponType: "Fixný", rating: "BBB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "stredná" }],
+      ["QV37", "Quantum Ventures", "Dlhopisy", 74, "Startupový dolárový dlhopis s vysokým výnosom aj rizikom.", "vysoké", "dlhopis", { coupon: "9.1 %", maturity: "2037", bondType: "Startupový", currency: "USD", couponType: "Variabilný", rating: "BB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "vysoká" }],
+      ["AF30", "AgriFund 2030", "Dlhopisy", 96, "Firemný dlhopis v poľnohospodárskom sektore.", "nízke", "dlhopis", { coupon: "3.8 %", maturity: "2030", bondType: "Firemný", currency: "EUR", couponType: "Fixný", rating: "BBB", liquidity: "Vysoká", minInvestment: "10 €", issuer: "firma", volatility: "nízka" }],
+      ["BOL33", "BlueOcean Logistics", "Dlhopisy", 85, "Dolárový logistický dlhopis s vyšším výnosom.", "vyššie", "dlhopis", { coupon: "6.1 %", maturity: "2033", bondType: "Firemný", currency: "USD", couponType: "Fixný", rating: "BB", liquidity: "Nízka", minInvestment: "100 €", issuer: "firma", volatility: "vysoká" }],
+      ["SI27", "Stable Income 2027", "Dlhopisy", 100, "Konzervatívny eurový dlhopis so stabilným kupónom.", "nízke", "dlhopis", { coupon: "2.3 %", maturity: "2027", bondType: "Konzervatívny", currency: "EUR", couponType: "Fixný", rating: "AAA", liquidity: "Vysoká", minInvestment: "10 €", issuer: "banka", volatility: "nízka" }],
+
+      ["GOLD", "Goldík", "Komodity", 97, "Fiktívny nástroj sledujúci cenu zlata.", "stredné", "komodita"],
       ["SILV", "Silvera", "Komodity", 28, "Fiktívny nástroj sledujúci cenu striebra.", "stredné", "komodita"],
       ["OILK", "Oilko", "Komodity", 69, "Energetická komodita naviazaná na ropu.", "vysoké", "komodita"],
       ["GASX", "Gasix", "Komodity", 37, "Fiktívny nástroj pre zemný plyn.", "vysoké", "komodita"],
@@ -1296,8 +1452,8 @@
       ["LITX", "LithiumX", "Komodity", 51, "Komoditný nástroj pre lítium.", "vysoké", "komodita"],
       ["WATR", "WaterIndex", "Komodity", 40, "Index infraštruktúry vody.", "stredné", "komodita"],
 
-      ["BTKR", "BitKoruna", "Kryptomeny", 310, "Fiktívna digitálna mena s obmedzenou ponukou.", "vysoké", "krypto"],
-      ["ETHK", "Etherka", "Kryptomeny", 156, "Sieťový token pre decentralizované aplikácie.", "vysoké", "krypto"],
+      ["BTKR", "BitKoruna", "Kryptomeny", 88, "Fiktívna digitálna mena s obmedzenou ponukou.", "vysoké", "krypto"],
+      ["ETHK", "Etherka", "Kryptomeny", 74, "Sieťový token pre decentralizované aplikácie.", "vysoké", "krypto"],
       ["MPES", "MemePes", "Kryptomeny", 4, "Komunitný token s výraznou volatilitou.", "vysoké", "krypto"],
       ["STEU", "StableEuro", "Kryptomeny", 1, "Fiktívny stabilný token naviazaný na euro.", "nízke", "krypto"],
       ["CHBX", "ChainBox", "Kryptomeny", 23, "Token pre dátovú infraštruktúru.", "vysoké", "krypto"],
@@ -1306,13 +1462,15 @@
       ["PRVC", "PrivacyCat", "Kryptomeny", 29, "Fiktívny token so zameraním na súkromie.", "vysoké", "krypto"],
       ["META", "MetaToken", "Kryptomeny", 9, "Token pre virtuálne služby a identitu.", "vysoké", "krypto"],
       ["GMCO", "GameCoin", "Kryptomeny", 7, "Token herných ekonomík.", "vysoké", "krypto"]
-    ].map(([id, name, category, basePrice, description, risk, type], index) => ({
+    ].map(([id, name, category, basePrice, description, risk, type, extra = {}], index) => ({
       id, name, category, basePrice, description, risk, type,
-      issuer: ["BlueBridge", "Nova Capital", "Danube Funds", "Atlas Markets"][index % 4],
-      currency: type !== "krypto" && index % 3 === 1 ? "USD" : "EUR",
+      isin: fakeIsin(id, index),
+      issuer: extra.issuer || ["BlueBridge", "Nova Capital", "Danube Funds", "Atlas Markets"][index % 4],
+      currency: extra.currency || (type !== "krypto" && index % 3 === 1 ? "USD" : "EUR"),
       ter: type === "ETF" ? (0.07 + (index % 6) * 0.05).toFixed(2) + " %" : "none",
       dividend: type === "akcia" ? ["DIST", "none", "ACC"][index % 3] : type === "ETF" ? ["ACC", "DIST"][index % 2] : "none",
-      replication: type === "ETF" ? ["physical", "synthetic"][index % 2] : "none"
+      replication: type === "ETF" ? ["physical", "synthetic"][index % 2] : "none",
+      ...extra
     }));
 
     const quickNews = [
@@ -1338,6 +1496,8 @@
     let historyStack = [];
     let selectedTransfer = 100;
     let selectedChartRange = "5D";
+    let selectedAccountRange = "1D";
+    let selectedInvestmentRange = "1D";
     let pendingLargeTransfer = null;
     let selectedNewsIndex = 0;
 
@@ -1370,7 +1530,11 @@
         transferredAmount: 0,
         cash: 0,
         holdings: {},
-        prices
+        prices,
+        history: {
+          account: [],
+          investments: []
+        }
       };
     }
 
@@ -1381,7 +1545,16 @@
           localStorage.removeItem(STORAGE_KEY);
           return defaultState();
         }
-        return { ...defaultState(), ...parsed, prices: { ...defaultState().prices, ...(parsed.prices || {}) } };
+        const defaults = defaultState();
+        return {
+          ...defaults,
+          ...parsed,
+          prices: { ...defaults.prices, ...(parsed.prices || {}) },
+          history: {
+            account: parsed.history?.account || [],
+            investments: parsed.history?.investments || []
+          }
+        };
       } catch {
         return defaultState();
       }
@@ -1406,8 +1579,32 @@
       return ((hash >>> 0) % 100000) / 100000;
     }
 
+    function fakeIsin(id, index) {
+      const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let hash = 2166136261 + index;
+      const source = `${id}-5penazi-demo`;
+      let suffix = "";
+      for (let i = 0; i < 10; i++) {
+        hash ^= source.charCodeAt(i % source.length) + i;
+        hash = Math.imul(hash, 16777619);
+        suffix += alphabet[(hash >>> 0) % alphabet.length];
+      }
+      return `5P${suffix}`;
+    }
+
     function formatMoney(value, currency = "EUR") {
       return new Intl.NumberFormat("sk-SK", { style: "currency", currency, maximumFractionDigits: 2 }).format(Number(value) || 0);
+    }
+
+    function formatPct(value) {
+      const n = Math.abs(Number(value) || 0) < 0.005 ? 0 : Number(value) || 0;
+      return `${n >= 0 ? "↗ +" : "↘ "}${n.toFixed(2).replace(".", ",")} %`;
+    }
+
+    function formatAxisPct(value) {
+      const n = Math.abs(Number(value) || 0) < 0.005 ? 0 : Number(value) || 0;
+      const precision = Math.abs(n) < 10 ? 1 : 0;
+      return `${n > 0 ? "+" : ""}${n.toFixed(precision).replace(".", ",")} %`;
     }
 
     function formatAssetMoney(asset, value) {
@@ -1416,11 +1613,13 @@
 
     function accountValue(asset, value) {
       const amount = Number(value) || 0;
-      return asset.currency === "USD" ? roundMoney(amount * USD_EUR_RATE) : roundMoney(amount);
+      if (asset.currency === "USD") return roundMoney(amount * USD_EUR_RATE);
+      if (asset.currency === "CHF") return roundMoney(amount * CHF_EUR_RATE);
+      return roundMoney(amount);
     }
 
     function conversionFee(asset, accountAmount) {
-      return asset.currency === "USD" ? roundMoney(accountAmount * CONVERSION_FEE_RATE) : 0;
+      return asset.currency !== "EUR" ? roundMoney(accountAmount * CONVERSION_FEE_RATE) : 0;
     }
 
     function buyBreakdown(asset, units) {
@@ -1449,8 +1648,57 @@
       return Math.round((Number(value) || 0) * 100) / 100;
     }
 
+    function portfolioCost() {
+      return Object.values(state.holdings).reduce((sum, holding) => sum + ((Number(holding.units) || 0) * (Number(holding.avgPrice) || 0)), 0);
+    }
+
+    function portfolioGainPct() {
+      const cost = portfolioCost();
+      if (!cost) return 0;
+      return ((portfolioValue() - cost) / cost) * 100;
+    }
+
+    function accountTotal() {
+      return roundMoney(state.cash + portfolioValue());
+    }
+
+    function ensureHistory() {
+      state.history ||= {};
+      state.history.account ||= [];
+      state.history.investments ||= [];
+      if (!state.history.account.length && state.transferredAmount > 0) {
+        state.history.account.push({ time: state.sessionStart || Date.now(), value: accountTotal() });
+      }
+      if (!state.history.investments.length && portfolioCost() > 0) {
+        state.history.investments.push({ time: Date.now(), value: roundMoney(portfolioCost()), cost: roundMoney(portfolioCost()) });
+      }
+    }
+
+    function appendHistorySample({ investmentValue = portfolioValue(), investmentStartValue = null, accountFlow = 0 } = {}) {
+      ensureHistory();
+      const now = Date.now();
+      const investments = roundMoney(investmentValue);
+      const total = roundMoney(state.cash + investments);
+      const append = (items, point) => {
+        const last = items[items.length - 1];
+        if (last && now - last.time < 850) {
+          items[items.length - 1] = { ...last, ...point, time: now };
+        } else {
+          items.push({ time: now, ...point });
+        }
+        return items.slice(-8640);
+      };
+      state.history.account = append(state.history.account, { value: total, flow: roundMoney(accountFlow) });
+      if (investmentStartValue !== null || investments > 0 || state.history.investments.length) {
+        state.history.investments = append(state.history.investments, {
+          value: investmentStartValue !== null ? roundMoney(investmentStartValue) : investments,
+          cost: roundMoney(portfolioCost())
+        });
+      }
+    }
+
     function categoryOf(name) {
-      return categories.find(cat => cat.name === name);
+      return categories.find(cat => cat.name === name || cat.assetCategory === name);
     }
 
     function movePrices() {
@@ -1463,14 +1711,14 @@
         const max = asset.basePrice * 1.45;
         state.prices[asset.id] = roundMoney(Math.min(max, Math.max(min, current * (1 + drift))));
       });
+      appendHistorySample();
       saveState();
     }
 
     function canAutoRefreshPrices() {
       if (state.transferredAmount <= 0 || route.screen === "salary") return false;
       if (appModal.classList.contains("show")) return false;
-      const activeTag = document.activeElement ? document.activeElement.tagName : "";
-      return !["INPUT", "TEXTAREA", "SELECT"].includes(activeTag);
+      return true;
     }
 
     function tickPrices() {
@@ -1513,8 +1761,75 @@
         return;
       }
       if (route.screen === "dashboard") {
-        renderPortfolioList();
+        const investments = portfolioValue();
+        const total = state.cash + investments;
+        const totalValue = root.querySelector("#dashboardTotalValue");
+        const investmentsValue = root.querySelector("#dashboardInvestments");
+        const cashValue = root.querySelector("#dashboardCash");
+        const accountChart = root.querySelector("#dashboardAccountChart");
+        const investmentChart = root.querySelector("#dashboardInvestmentChart");
+        const investmentBadge = root.querySelector("#dashboardInvestmentBadge");
+        const badge = root.querySelector("#dashboardGrowthBadge");
+        if (totalValue) totalValue.textContent = formatMoney(total);
+        if (investmentsValue) investmentsValue.textContent = formatMoney(investments);
+        if (cashValue) cashValue.textContent = formatMoney(state.cash);
+        if (accountChart) accountChart.innerHTML = accountChartSvg("1D", true);
+        if (investmentChart) investmentChart.innerHTML = investmentChartSvg("1D", true);
+        if (investmentBadge) {
+          const gain = portfolioGainPct();
+          investmentBadge.classList.toggle("loss", gain < 0);
+          investmentBadge.textContent = formatPct(gain);
+        }
+        if (badge) badge.textContent = investments > 0 ? formatPct(accountGrowthPct("1D")) : "↗ +0,00 %";
+        renderPortfolioList({ limit: 3 });
       }
+      if (route.screen === "buy") {
+        const asset = byId[route.assetId];
+        const move = pctMove(asset.id);
+        const input = root.querySelector("#buyUnits");
+        const amountInput = root.querySelector("#buyAmount");
+        const price = root.querySelector("#buyCurrentPrice");
+        const moveEl = root.querySelector("#buyCurrentMove");
+        const total = root.querySelector("#buyTotal");
+        const estimate = root.querySelector("#buyEstimate");
+        const fee = root.querySelector("#buyFee");
+        const feeLabel = root.querySelector("#buyFeeLabel");
+        const confirm = root.querySelector("#confirmBuy");
+        if (price) price.innerHTML = animatedPrice(state.prices[asset.id], "", asset.currency);
+        if (moveEl) {
+          moveEl.className = move >= 0 ? "gain" : "loss";
+          moveEl.textContent = `${move >= 0 ? "+" : ""}${move.toFixed(2)}%`;
+        }
+        const editingAmount = document.activeElement === amountInput;
+        if (input && total && estimate && fee && feeLabel && confirm && !editingAmount) {
+          const units = Number(String(input.value).replace(",", ".")) || 0;
+          const breakdown = buyBreakdown(asset, units);
+          total.textContent = formatMoney(breakdown.total);
+          estimate.textContent = asset.currency === "USD" || asset.currency === "CHF"
+            ? `${formatAssetMoney(asset, breakdown.assetSubtotal)} ≈ ${formatMoney(breakdown.accountSubtotal)}`
+            : formatMoney(breakdown.accountSubtotal);
+          fee.textContent = formatMoney(breakdown.fee);
+          feeLabel.textContent = asset.currency !== "EUR" ? "Poplatok za konverziu 1 %" : "Poplatok";
+          confirm.disabled = units <= 0 || breakdown.total > state.cash;
+        }
+      }
+      if (route.screen === "sell") {
+        const asset = byId[route.assetId];
+        const input = root.querySelector("#sellUnits");
+        const price = root.querySelector("#sellCurrentPrice");
+        const total = root.querySelector("#sellTotal");
+        const valueEl = root.querySelector("#sellValue");
+        if (price) price.innerHTML = animatedPrice(state.prices[asset.id], "", asset.currency);
+        if (input && total && valueEl) {
+          const units = Number(input.value) || 0;
+          const value = accountValue(asset, units * state.prices[asset.id]);
+          total.textContent = formatMoney(value);
+          valueEl.textContent = formatMoney(value);
+        }
+      }
+      if (route.screen === "accountChart") renderAccountChartBody();
+      if (route.screen === "investmentChart") renderInvestmentChartBody();
+      if (route.screen === "portfolio") renderPortfolioAllBody();
     }
 
     function navigate(nextRoute, replace = false) {
@@ -1522,6 +1837,48 @@
       route = nextRoute;
       movePrices();
       render();
+      scrollToTop();
+    }
+
+    function goToMarkets() {
+      historyStack.push(route);
+      route = { screen: "categories" };
+      renderCategories();
+      scrollToTop();
+    }
+
+    function goToCategory(category) {
+      historyStack.push(route);
+      route = { screen: "category", category };
+      renderCategory(category);
+      scrollToTop();
+    }
+
+    function goToDetail(assetId) {
+      historyStack.push(route);
+      route = { screen: "detail", assetId };
+      renderDetail(assetId);
+      scrollToTop();
+    }
+
+    function goToBuy(assetId) {
+      historyStack.push(route);
+      route = { screen: "buy", assetId };
+      renderBuy(assetId);
+      scrollToTop();
+    }
+
+    function goToDashboard() {
+      route = { screen: "dashboard" };
+      historyStack = [];
+      renderDashboard();
+      scrollToTop();
+    }
+
+    function goToPortfolio() {
+      historyStack.push(route);
+      route = { screen: "portfolio" };
+      renderPortfolioAll();
       scrollToTop();
     }
 
@@ -1610,11 +1967,32 @@
         FAST: "↯",
         PRVC: "◍",
         META: "✦",
-        GMCO: "◆"
+        GMCO: "◆",
+        SB28: "▤",
+        ES30: "▥",
+        GFB32: "♻",
+        NE29: "↯",
+        CR35: "▧",
+        TGN31: "✦",
+        ABB27: "◆",
+        BP33: "◫",
+        FM34: "↗",
+        SHB29: "⌂",
+        SG36: "☼",
+        AE30: "≋",
+        HT32: "⌁",
+        MTP31: "✚",
+        NS26: "◌",
+        MB34: "▦",
+        QV37: "✹",
+        AF30: "✶",
+        BOL33: "◈",
+        SI27: "◎"
       };
       if (map[asset.id]) return map[asset.id];
       if (asset.category === "Akcie") return "↗";
       if (asset.category === "ETF") return "◈";
+      if (asset.category === "Dlhopisy") return "▤";
       if (asset.category === "Komodity") return asset.id === "GOLD" ? "▣" : "◇";
       return "◆";
     }
@@ -1622,11 +2000,19 @@
     function categoryMeta(name) {
       const map = {
         "Akcie": { image: "stocks.png", sub: "Individuálne tituly", count: "2 400+", watermark: "↗" },
-        "ETF": { image: "etf.png", sub: "Diverzifikované koše", count: "850+", watermark: "◫" },
+        "ETF": { image: "etf.png", sub: "ETF, Index, Fondy", count: "850+", watermark: "◫" },
+        "Fondy": { image: "etf.png", sub: "ETF, Index, Fondy", count: "850+", watermark: "◫" },
+        "Dlhopisy": { image: "bonds.png", sub: "Kupónové aktíva", count: "20", watermark: "▤" },
         "Komodity": { image: "commodities.png", sub: "Suroviny a indexy", count: "120+", watermark: "⬡" },
-        "Kryptomeny": { image: "crypto.png", sub: "Digitálne aktíva", count: "300+", watermark: "◈" }
+        "Kryptomeny": { image: "crypto.png", sub: "Digitálne aktíva", count: "300+", watermark: "◈" },
+        "Kryptoaktíva": { image: "crypto.png", sub: "Digitálne aktíva", count: "300+", watermark: "◈" }
       };
       return map[name] || { image: "stocks.png", sub: "Investičná kategória", count: "100+", watermark: "□" };
+    }
+
+    function categoryDisplayName(category) {
+      const cat = typeof category === "string" ? categoryOf(category) : category;
+      return cat?.name || category;
     }
 
     function pctMove(assetId) {
@@ -1635,7 +2021,7 @@
     }
 
     function riskDots(risk) {
-      const count = risk === "nízke" ? 2 : risk === "stredné" ? 3 : 5;
+      const count = risk === "nízke" ? 2 : risk === "stredné" ? 3 : risk === "vyššie" ? 4 : 5;
       return Array.from({ length: 5 }, (_, i) => `<span class="${i < count ? "on" : ""}"></span>`).join("");
     }
 
@@ -1643,7 +2029,7 @@
       title.textContent = text;
       backBtn.disabled = historyStack.length === 0 || route.screen === "salary";
       homeBtn.disabled = state.transferredAmount <= 0 || route.screen === "dashboard";
-      navDashboard.classList.toggle("active", route.screen === "dashboard");
+      navDashboard.classList.toggle("active", ["dashboard", "accountChart", "investmentChart", "portfolio"].includes(route.screen));
       navMarkets.classList.toggle("active", ["categories", "category", "detail", "buy", "sell"].includes(route.screen));
       navWallet.classList.toggle("active", route.screen === "salary");
     }
@@ -1651,6 +2037,9 @@
     function render() {
       if (route.screen === "salary") return renderSalary();
       if (route.screen === "dashboard") return renderDashboard();
+      if (route.screen === "accountChart") return renderAccountChart();
+      if (route.screen === "investmentChart") return renderInvestmentChart();
+      if (route.screen === "portfolio") return renderPortfolioAll();
       if (route.screen === "categories") return renderCategories();
       if (route.screen === "category") return renderCategory(route.category);
       if (route.screen === "detail") return renderDetail(route.assetId);
@@ -1695,6 +2084,7 @@
       state.transferredAmount = roundMoney(amount);
       state.cash = roundMoney(amount);
       state.sessionStart = Date.now();
+      appendHistorySample({ accountFlow: amount });
       saveState();
 
       showTransferStep("done", "Platba dorazila", "Peniaze sú pripravené na investičnom účte.");
@@ -1702,11 +2092,28 @@
       showTransferStep("redirect", "Presmerovanie", "Otvárame investičný účet.");
       await sleep(2000);
       transferOverlay.className = "transfer-overlay";
-      navigate({ screen: "dashboard" }, true);
+      route = { screen: "dashboard" };
+      historyStack = [];
+      render();
+      scrollToTop();
+    }
+
+    async function runTopUpFlow(amount) {
+      showTransferStep("", "Spracovávame platbu", "Posielame peniaze z osobného účtu na investičný.");
+      await sleep(850);
+      state.transferredAmount = roundMoney((Number(state.transferredAmount) || 0) + amount);
+      state.cash = roundMoney((Number(state.cash) || 0) + amount);
+      appendHistorySample();
+      saveState();
+      showTransferStep("done", "Peniaze dorazili", "Hotovosť na investičnom účte je navýšená.");
+      await sleep(850);
+      transferOverlay.className = "transfer-overlay";
+      renderDashboard();
+      showNotice("dashboardNotice", "ok", `Pridal si ${formatMoney(amount)}. Do limitu 30 % z výplaty ostáva ${formatMoney(Math.max(0, INVESTMENT_LIMIT - state.transferredAmount))}.`);
     }
 
     function renderSalary() {
-      setTitle("Osobný účet");
+      setTitle("Tvoj bankový účet");
       root.innerHTML = `
         <section class="screen">
           <div class="card hero">
@@ -1730,7 +2137,7 @@
           </div>
 
           <div class="card section">
-            <p class="eyebrow">Platobné údaje tvojho investičného účtu u 5peňazíBroker a.s.</p>
+            <p class="eyebrow">Platobné údaje investičného účtu u 5peňazíBroker a.s.</p>
             <div class="rows">
               <div class="row payment-row">
                 <span><span class="eyebrow" style="display:block;margin-bottom:2px">IBAN</span><strong>SK00 0000 0000 0000 1234 5678</strong></span>
@@ -1770,16 +2177,10 @@
           notice.textContent = "Zadaj sumu od 1 € do 1200 €.";
           return;
         }
-        if (amount > SALARY * 0.6) {
+        if (amount > INVESTMENT_LIMIT) {
           pendingLargeTransfer = null;
           notice.className = "notice err show";
           notice.textContent = "Kámo, treba aj z niečoho žiť. Zníž sumu, ktorú investuješ";
-          return;
-        }
-        if (amount > SALARY * 0.3 && pendingLargeTransfer !== amount) {
-          pendingLargeTransfer = amount;
-          notice.className = "notice err show";
-          notice.textContent = "Ufff, dávaj pozor aby si nežil iba na vifónkach. Ak si si istý, klikni ešte raz na Poslať peniaze. Je to na tebe!";
           return;
         }
         pendingLargeTransfer = null;
@@ -1799,19 +2200,29 @@
             <h2>Prehľad účtu</h2>
           </div>
 
-          <div class="card dark-card total-card">
+          <button id="openAccountChart" class="card dark-card total-card" type="button" aria-label="Zobraziť vývoj hodnoty účtu">
             <div class="total-watermark" aria-hidden="true">⌁</div>
             <p class="eyebrow">Celková hodnota účtu (hotovosť + investície)</p>
-            <div class="amount">${formatMoney(total)}</div>
+            <div class="amount" id="dashboardTotalValue">${formatMoney(total)}</div>
             <div class="toolbar" style="margin-top:12px">
-              <span class="soft-badge">↗ +${investments > 0 ? "2,45" : "0,00"} %</span>
+              <span class="soft-badge" id="dashboardGrowthBadge">${investments > 0 ? formatPct(accountGrowthPct("1D")) : "↗ +0,00 %"}</span>
               <span style="color:rgba(255,255,255,.62);font-size:13px">demo vývoj účtu</span>
             </div>
-          </div>
+            <div class="account-chart" id="dashboardAccountChart" aria-hidden="true">${accountChartSvg("1D", true)}</div>
+          </button>
 
           <div class="grid two section">
-            <div class="card stat-card"><p>Investície</p><strong>${formatMoney(investments)}</strong></div>
-            <div class="card stat-card"><p>Hotovosť</p><strong>${formatMoney(state.cash)}</strong></div>
+            <button id="openInvestmentChart" class="card stat-card actionable" type="button" aria-label="Zobraziť vývoj hodnoty investícií">
+              <div class="stat-topline">
+                <div>
+                  <p>Hodnota investícií</p>
+                  <strong id="dashboardInvestments">${formatMoney(investments)}</strong>
+                </div>
+                <span class="soft-badge ${portfolioGainPct() < 0 ? "loss" : ""}" id="dashboardInvestmentBadge">${formatPct(portfolioGainPct())}</span>
+              </div>
+              <div class="stat-mini-chart" id="dashboardInvestmentChart" aria-hidden="true">${investmentChartSvg("1D", true)}</div>
+            </button>
+            <div class="card stat-card"><p>Hotovosť</p><strong id="dashboardCash">${formatMoney(state.cash)}</strong></div>
           </div>
 
           <div class="action-stack section">
@@ -1839,14 +2250,19 @@
           </section>
         </section>
       `;
-      root.querySelector("#investBtn").addEventListener("click", () => navigate({ screen: "categories" }));
-      root.querySelector("#addMoneyBtn").addEventListener("click", () => showNotice("dashboardNotice", "info", "Už nemáš viac peňazí na osobnom účte. Počkaj na ďalšiu výplatu.<br>V bežnom živote si ich vieš poslať cez banku, kartou, paypalom atď...<br>Pozor ale na poplatky, niektoré spôsoby sú spoplatnené viac, iné menej.", true));
+      root.querySelector("#openAccountChart").addEventListener("click", () => navigate({ screen: "accountChart" }));
+      root.querySelector("#openInvestmentChart").addEventListener("click", () => navigate({ screen: "investmentChart" }));
+      root.querySelector("#investBtn").addEventListener("click", goToMarkets);
+      root.querySelector("#addMoneyBtn").addEventListener("click", showTopUpModal);
       root.querySelector("#withdrawBtn").addEventListener("click", withdrawCash);
       root.querySelector("#showAllPortfolio").addEventListener("click", () => {
-        if (Object.values(state.holdings).length) return;
+        if (Object.values(state.holdings).length) {
+          goToPortfolio();
+          return;
+        }
         showNotice("dashboardNotice", "info", "Portfólio je zatiaľ prázdne. Najprv si otvor kategóriu Investovať.");
       });
-      renderPortfolioList();
+      renderPortfolioList({ limit: 3 });
       renderQuickNews();
     }
 
@@ -1859,14 +2275,15 @@
       showWithdrawModal();
     }
 
-    function renderPortfolioList() {
-      const list = root.querySelector("#portfolioList");
+    function renderPortfolioList({ limit = null, target = "#portfolioList" } = {}) {
+      const list = root.querySelector(target);
       const holdings = Object.values(state.holdings);
       if (!holdings.length) {
         list.innerHTML = `<div class="empty">Zatiaľ nemáš žiadne investície.</div>`;
         return;
       }
-      list.innerHTML = `<div class="grid">${holdings.map(holding => {
+      const visibleHoldings = limit ? holdings.slice(0, limit) : holdings;
+      list.innerHTML = `<div class="grid">${visibleHoldings.map(holding => {
         const asset = byId[holding.id];
         const currentPrice = state.prices[holding.id];
         const currentValue = accountValue(asset, holding.units * currentPrice);
@@ -1889,8 +2306,27 @@
         `;
       }).join("")}</div>`;
       list.querySelectorAll("[data-holding]").forEach(button => {
-        button.addEventListener("click", () => navigate({ screen: "detail", assetId: button.dataset.holding }));
+        button.addEventListener("click", () => goToDetail(button.dataset.holding));
       });
+    }
+
+    function renderPortfolioAllBody() {
+      const wrap = root.querySelector("#portfolioAllBody");
+      if (!wrap) return;
+      wrap.innerHTML = `
+        <div class="page-intro">
+          <h2>Moje portfolio</h2>
+          <p>Všetky aktíva, ktoré máš aktuálne nakúpené.</p>
+        </div>
+        <div id="portfolioAllList"></div>
+      `;
+      renderPortfolioList({ target: "#portfolioAllList" });
+    }
+
+    function renderPortfolioAll() {
+      setTitle("Moje portfolio");
+      root.innerHTML = `<section class="screen" id="portfolioAllBody"></section>`;
+      renderPortfolioAllBody();
     }
 
     function renderQuickNews() {
@@ -1925,12 +2361,14 @@
           </div>
           <div class="grid categories section">
             ${categories.map(cat => {
-              const meta = categoryMeta(cat.name);
+              const categoryKey = cat.assetCategory || cat.name;
+              const meta = categoryMeta(categoryKey);
+              const title = categoryDisplayName(cat);
               return `
-              <button class="card category-card ${cat.id}" data-category="${cat.name}" type="button">
+              <button class="card category-card ${cat.id}" data-category="${categoryKey}" type="button">
                 <span class="cat-watermark" aria-hidden="true">${meta.watermark}</span>
                 <img class="cat-art" src="assets/categories/${meta.image}" alt="" loading="lazy" aria-hidden="true">
-                <div class="cat-title">${cat.name}</div>
+                <div class="cat-title">${title}</div>
                 <div class="cat-sub">${meta.sub}</div>
                 <div class="cat-link">Prezerať ${meta.count}</div>
                 <span class="cat-arrow" aria-hidden="true">›</span>
@@ -1940,25 +2378,26 @@
         </section>
       `;
       root.querySelectorAll("[data-category]").forEach(button => {
-        button.addEventListener("click", () => navigate({ screen: "category", category: button.dataset.category }));
+        button.addEventListener("click", () => goToCategory(button.dataset.category));
       });
       const categoryCards = [...root.querySelectorAll("[data-category]")];
       root.querySelector("#categorySearch").addEventListener("input", event => {
         const term = event.target.value.trim().toLowerCase();
         categoryCards.forEach(card => {
-          const name = card.dataset.category.toLowerCase();
+          const name = categoryDisplayName(card.dataset.category).toLowerCase();
           const meta = categoryMeta(card.dataset.category);
-          card.classList.toggle("hide", term && !name.includes(term) && !meta.sub.toLowerCase().includes(term));
+          const originalName = card.dataset.category.toLowerCase();
+          card.classList.toggle("hide", term && !name.includes(term) && !originalName.includes(term) && !meta.sub.toLowerCase().includes(term));
         });
       });
     }
 
     function renderCategory(category) {
-      setTitle(category);
+      setTitle(categoryDisplayName(category));
       const items = assets.filter(asset => asset.category === category);
       root.innerHTML = `
         <section class="screen">
-          <h1>${category}</h1>
+          <h1>${categoryDisplayName(category)}</h1>
           <div class="search-box">
             <span aria-hidden="true">⌕</span>
             <input id="assetSearch" type="search" placeholder="Hľadať v kategórii..." autocomplete="off">
@@ -1978,6 +2417,11 @@
                   <span class="market-change ${move >= 0 ? "gain" : "loss"}">${move >= 0 ? "↗ +" : "↘ "}${move.toFixed(2)}%</span>
                 </div>
                 <p class="desc">${asset.description}</p>
+                <div class="asset-tags">
+                  <span class="mini-tag">ISIN ${asset.isin}</span>
+                  ${asset.type === "dlhopis" ? `<span class="mini-tag">Kupón ${asset.coupon}</span><span class="mini-tag">Splatnosť ${asset.maturity}</span>` : ""}
+                  ${asset.type === "ETF" ? `<span class="mini-tag">ETF</span><span class="mini-tag">Index</span><span class="mini-tag">Fondy</span>` : ""}
+                </div>
                 <div class="market-actions">
                   <span><span class="mini-label">Riziko:</span> <span class="tag ${riskClass(asset.risk)}">${asset.risk}</span></span>
                   <button class="btn primary mini-detail" data-detail="${asset.id}" type="button">Detail</button>
@@ -1996,7 +2440,7 @@
         });
       });
       root.querySelectorAll("[data-detail]").forEach(button => {
-        button.addEventListener("click", () => navigate({ screen: "detail", assetId: button.dataset.detail }));
+        button.addEventListener("click", () => goToDetail(button.dataset.detail));
       });
     }
 
@@ -2030,11 +2474,11 @@
             <div class="detail-metrics">
               <div class="metric-card">
                 <p class="eyebrow">Úroveň rizika</p>
-                <div class="risk-dots">${riskDots(asset.risk)}<strong style="margin-left:6px">${asset.risk === "nízke" ? "2" : asset.risk === "stredné" ? "3" : "5"}/5</strong></div>
+                <div class="risk-dots">${riskDots(asset.risk)}<strong style="margin-left:6px">${asset.risk === "nízke" ? "2" : asset.risk === "stredné" ? "3" : asset.risk === "vyššie" ? "4" : "5"}/5</strong></div>
               </div>
               <div class="metric-card">
-                <p class="eyebrow">Objem (24h)</p>
-                <strong>${asset.category === "Kryptomeny" ? "420M" : asset.category === "ETF" ? "1,2B" : "860M"} EUR</strong>
+                <p class="eyebrow">${asset.type === "dlhopis" ? "Kupón" : "Objem (24h)"}</p>
+                <strong>${asset.type === "dlhopis" ? asset.coupon : asset.category === "Kryptomeny" ? "420M" : asset.category === "ETF" ? "1,2B" : "860M"} ${asset.type === "dlhopis" ? "" : "EUR"}</strong>
               </div>
             </div>
 
@@ -2051,6 +2495,16 @@
                 <div class="row"><span>TER</span><strong>${asset.ter}</strong></div>
                 <div class="row"><span>Dividend type</span><strong>${asset.dividend}</strong></div>
                 <div class="row"><span>Replication</span><strong>${asset.replication}</strong></div>
+                <div class="row"><span>ISIN</span><strong>${asset.isin}</strong></div>
+                ${asset.type === "dlhopis" ? `
+                <div class="row"><span>Kupón</span><strong>${asset.coupon}</strong></div>
+                <div class="row"><span>Kupón typ</span><strong>${asset.couponType}</strong></div>
+                <div class="row"><span>Splatnosť</span><strong>${asset.maturity}</strong></div>
+                <div class="row"><span>Rating</span><strong>${asset.rating}</strong></div>
+                <div class="row"><span>Likvidita</span><strong>${asset.liquidity}</strong></div>
+                <div class="row"><span>Min. investícia</span><strong>${asset.minInvestment}</strong></div>
+                <div class="row"><span>Typ dlhopisu</span><strong>${asset.bondType}</strong></div>
+                <div class="row"><span>Volatilita</span><strong>${asset.volatility}</strong></div>` : ""}
                 <div class="row"><span>Issuer</span><strong>${asset.issuer}</strong></div>
                 <div class="row"><span>Currency</span><strong>${asset.currency}</strong></div>
               </div>
@@ -2064,7 +2518,7 @@
           </div>
         </section>
       `;
-      root.querySelector("#buyAssetBtn").addEventListener("click", () => navigate({ screen: "buy", assetId }));
+      root.querySelector("#buyAssetBtn").addEventListener("click", () => goToBuy(assetId));
       const sell = root.querySelector("#sellAssetBtn");
       if (sell) sell.addEventListener("click", () => navigate({ screen: "sell", assetId }));
       root.querySelector("#backAssetBtn").addEventListener("click", back);
@@ -2084,8 +2538,9 @@
       const minPrice = Math.min(...prices);
       const maxPrice = Math.max(...prices);
       const padding = Math.max(3, (maxPrice - minPrice) * .18);
-      const yMin = Math.max(.01, minPrice - padding);
-      const yMax = maxPrice + padding;
+      const scale = niceScale(minPrice - padding, maxPrice + padding, 4, maxPrice >= 25 ? 5 : 1);
+      const yMin = scale.min;
+      const yMax = scale.max;
       const left = 54;
       const top = 18;
       const width = 348;
@@ -2096,7 +2551,7 @@
       const points = series.map((point, index) => [toX(index), toY(point.price)]);
       const line = points.map((point, index) => `${index ? "L" : "M"} ${point[0].toFixed(1)} ${point[1].toFixed(1)}`).join(" ");
       const area = `${line} L ${left + width} ${bottom} L ${left} ${bottom} Z`;
-      const ticks = Array.from({ length: 4 }, (_, index) => yMin + ((yMax - yMin) / 3) * index).reverse();
+      const ticks = scale.ticks.slice().reverse();
       const xLabels = range === "1D" ? ["9:00", "13:00", "17:00"] : range === "5D" ? ["Po", "St", "Pi"] : ["Jan", "Jun", "Dec"];
       const last = series[series.length - 1].price;
       const first = series[0].price;
@@ -2112,7 +2567,7 @@
           <text class="chart-title" x="54" y="15">Cena</text>
           <text class="chart-title" x="372" y="204">Cas</text>
           ${ticks.map((tick, index) => {
-            const y = top + index * (height / 3);
+            const y = toY(tick);
             return `<line class="chart-grid" x1="${left}" y1="${y}" x2="${left + width}" y2="${y}"></line><text class="chart-label" x="6" y="${y + 4}">${formatAssetMoney(asset, tick)}</text>`;
           }).join("")}
           <line class="chart-axis" x1="${left}" y1="${top}" x2="${left}" y2="${bottom}"></line>
@@ -2128,6 +2583,247 @@
       `;
     }
 
+    function actualHistorySeries(kind, range, fallbackValue = 0) {
+      ensureHistory();
+      const source = state.history[kind] || [];
+      const maxAge = { "1D": DAY_MS, "5D": DAY_MS * 5, "1R": DAY_MS * 365 }[range] || DAY_MS;
+      const cutoff = Date.now() - maxAge;
+      let series = source.filter(point => point.time >= cutoff);
+      if (!series.length && source.length) series = [source[source.length - 1]];
+      if (!series.length) series = [{ time: Date.now(), value: roundMoney(fallbackValue), cost: roundMoney(portfolioCost()) }];
+      const latestValue = kind === "account" ? accountTotal() : portfolioValue();
+      const last = series[series.length - 1];
+      if (!last || Math.abs((last.value || 0) - latestValue) > .005) {
+        series = [...series, { time: Date.now(), value: roundMoney(latestValue), cost: roundMoney(portfolioCost()) }];
+      }
+      return series.map(point => ({ ...point, value: roundMoney(point.value) }));
+    }
+
+    function accountHistorySeries(range) {
+      return actualHistorySeries("account", range, accountTotal());
+    }
+
+    function investmentHistorySeries(range) {
+      return actualHistorySeries("investments", range, portfolioValue());
+    }
+
+    function investmentPerformanceSeries(range) {
+      const currentCost = portfolioCost();
+      return investmentHistorySeries(range).map(point => {
+        const cost = Number(point.cost) || currentCost || Number(point.value) || 1;
+        const value = cost ? ((Number(point.value) - cost) / cost) * 100 : 0;
+        return { ...point, moneyValue: point.value, value: roundMoney(value) };
+      });
+    }
+
+    function seriesGrowthPct(series) {
+      const first = series[0]?.value || 1;
+      const last = series[series.length - 1]?.value || 0;
+      return ((last - first) / first) * 100;
+    }
+
+    function accountGrowthPct(range) {
+      return seriesGrowthPct(accountHistorySeries(range));
+    }
+
+    function niceTickStep(rawStep, minStep = 1) {
+      const magnitude = Math.pow(10, Math.floor(Math.log10(Math.max(0.0001, rawStep))));
+      const normalized = rawStep / magnitude;
+      const nice = normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 2.5 ? 2.5 : normalized <= 5 ? 5 : 10;
+      return Math.max(minStep, nice * magnitude);
+    }
+
+    function niceScale(minValue, maxValue, tickCount = 4, minStep = 1, floorAtZero = true) {
+      if (minValue === maxValue) {
+        const step = niceTickStep(Math.max(minStep, Math.abs(maxValue) / 3), minStep);
+        const min = Math.floor((minValue - step) / step) * step;
+        const max = Math.ceil((maxValue + step) / step) * step;
+        return {
+          min: floorAtZero ? Math.max(0, min) : min,
+          max,
+          ticks: Array.from({ length: tickCount }, (_, index) => max - (index * step)).reverse()
+        };
+      }
+      const rawStep = (maxValue - minValue) / Math.max(1, tickCount - 1);
+      const step = niceTickStep(rawStep, minStep);
+      const min = floorAtZero ? Math.max(0, Math.floor(minValue / step) * step) : Math.floor(minValue / step) * step;
+      const max = Math.ceil(maxValue / step) * step;
+      const ticks = [];
+      for (let value = min; value <= max + step * .5; value += step) {
+        ticks.push(roundMoney(value));
+      }
+      while (ticks.length < tickCount) ticks.push(roundMoney((ticks[ticks.length - 1] || 0) + step));
+      return { min, max: ticks[ticks.length - 1], ticks };
+    }
+
+    function chartMinStep(maxValue) {
+      if (maxValue < 50) return 1;
+      if (maxValue < 100) return 5;
+      if (maxValue < 250) return 25;
+      if (maxValue < 500) return 50;
+      return 100;
+    }
+
+    function historyChartSvg({ series, range = "1D", compact = false, label = "Graf vývoja", currency = "EUR", valueFormatter = null, minStep = null, floorAtZero = true, includeZero = false }) {
+      const values = series.map(point => point.value);
+      const scaleValues = includeZero ? [...values, 0] : values;
+      const minPrice = Math.min(...values);
+      const maxPrice = Math.max(...values);
+      const minScaleValue = Math.min(...scaleValues);
+      const maxScaleValue = Math.max(...scaleValues);
+      const step = minStep ?? chartMinStep(maxPrice);
+      const padding = Math.max(step, (maxScaleValue - minScaleValue) * .22);
+      const scale = niceScale(minScaleValue - padding, maxScaleValue + padding, 4, step, floorAtZero);
+      const yMin = scale.min;
+      const yMax = scale.max;
+      const view = compact ? { w: 420, h: 130, l: 14, t: 12, r: 14, b: 18 } : { w: 420, h: 220, l: 56, t: 18, r: 18, b: 42 };
+      const width = view.w - view.l - view.r;
+      const height = view.h - view.t - view.b;
+      const toX = index => view.l + (index / Math.max(1, series.length - 1)) * width;
+      const toY = price => view.t + height - ((price - yMin) / Math.max(.01, yMax - yMin)) * height;
+      const points = series.map((point, index) => [toX(index), toY(point.value)]);
+      const line = points.map((point, index) => `${index ? "L" : "M"} ${point[0].toFixed(1)} ${point[1].toFixed(1)}`).join(" ");
+      const area = `${line} L ${view.l + width} ${view.t + height} L ${view.l} ${view.t + height} Z`;
+      if (compact) {
+        return `
+          <svg viewBox="0 0 ${view.w} ${view.h}" role="img" aria-label="${label}">
+            <path class="account-area" d="${area}"></path>
+            <path class="account-line" d="${line}"></path>
+          </svg>
+        `;
+      }
+      const ticks = scale.ticks.slice().reverse();
+      const firstTime = series[0]?.time || Date.now();
+      const lastTime = series[series.length - 1]?.time || Date.now();
+      const middleTime = firstTime + ((lastTime - firstTime) / 2);
+      const showSeconds = lastTime - firstTime < 60 * 60 * 1000;
+      const labelTime = time => new Intl.DateTimeFormat("sk-SK", { hour: "2-digit", minute: "2-digit", second: showSeconds ? "2-digit" : undefined }).format(new Date(time));
+      const xLabels = series.length <= 2 ? ["Štart", "", "Teraz"] : [labelTime(firstTime), labelTime(middleTime), labelTime(lastTime)];
+      const stroke = values[values.length - 1] >= values[0] ? "#138a4d" : "#c43d3d";
+      return `
+        <svg viewBox="0 0 420 220" role="img" aria-label="${label}">
+          <defs>
+            <linearGradient id="account-g-${range}" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="${stroke}" stop-opacity=".22"/>
+              <stop offset="1" stop-color="${stroke}" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          ${ticks.map((tick, index) => {
+            const y = toY(tick);
+            return `<line class="chart-grid" x1="${view.l}" y1="${y}" x2="${view.l + width}" y2="${y}"></line><text class="chart-label" x="6" y="${y + 4}">${valueFormatter ? valueFormatter(tick) : formatMoney(tick, currency)}</text>`;
+          }).join("")}
+          <line class="chart-axis" x1="${view.l}" y1="${view.t}" x2="${view.l}" y2="${view.t + height}"></line>
+          <line class="chart-axis" x1="${view.l}" y1="${view.t + height}" x2="${view.l + width}" y2="${view.t + height}"></line>
+          ${xLabels.map((label, index) => {
+            const x = view.l + index * (width / 2);
+            return `<text class="chart-label" text-anchor="middle" x="${x}" y="196">${label}</text>`;
+          }).join("")}
+          <path d="${area}" fill="url(#account-g-${range})"></path>
+          <path d="${line}" fill="none" stroke="${stroke}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+          <circle cx="${points[points.length - 1][0].toFixed(1)}" cy="${points[points.length - 1][1].toFixed(1)}" r="4.8" fill="${stroke}"></circle>
+        </svg>
+      `;
+    }
+
+    function accountChartSvg(range = "1D", compact = false) {
+      return historyChartSvg({
+        series: accountHistorySeries(range),
+        range,
+        compact,
+        label: "Graf vývoja hodnoty investičného účtu"
+      });
+    }
+
+    function investmentChartSvg(range = "1D", compact = false) {
+      const series = investmentPerformanceSeries(range);
+      const maxAbs = Math.max(1, ...series.map(point => Math.abs(point.value)));
+      return historyChartSvg({
+        series,
+        range: `investments-${range}`,
+        compact,
+        label: "Percentuálny výkon investícií od nákupu",
+        valueFormatter: formatAxisPct,
+        minStep: maxAbs < 3 ? .5 : maxAbs < 10 ? 1 : 2.5,
+        floorAtZero: false,
+        includeZero: true
+      });
+    }
+
+    function renderAccountChartBody() {
+      const total = state.cash + portfolioValue();
+      const wrap = root.querySelector("#accountChartBody");
+      if (!wrap) return;
+      wrap.innerHTML = `
+        <div class="page-intro">
+          <h2>Vývoj hodnoty účtu</h2>
+          <p>Celková hodnota hotovosti a investícií podľa reálnych demo tikov.</p>
+        </div>
+        <div class="card account-chart-card">
+          <p class="eyebrow">Aktuálna hodnota</p>
+          <div class="amount" style="color:var(--blue-dark)">${formatMoney(total)}</div>
+          <div class="toolbar">
+            <span class="soft-badge">${formatPct(accountGrowthPct(selectedAccountRange))}</span>
+            ${["1D", "5D", "1R"].map(range => `<button class="range-btn ${selectedAccountRange === range ? "active" : ""}" data-account-range="${range}" type="button">${range}</button>`).join("")}
+          </div>
+          <div class="chart">${accountChartSvg(selectedAccountRange)}</div>
+        </div>
+        <div class="grid two section">
+          <div class="card stat-card"><p>Investície</p><strong>${formatMoney(portfolioValue())}</strong></div>
+          <div class="card stat-card"><p>Hotovosť</p><strong>${formatMoney(state.cash)}</strong></div>
+        </div>
+      `;
+      wrap.querySelectorAll("[data-account-range]").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedAccountRange = button.dataset.accountRange;
+          renderAccountChartBody();
+        });
+      });
+    }
+
+    function renderAccountChart() {
+      setTitle("Vývoj účtu");
+      root.innerHTML = `<section class="screen" id="accountChartBody"></section>`;
+      renderAccountChartBody();
+    }
+
+    function renderInvestmentChartBody() {
+      const investments = portfolioValue();
+      const gain = portfolioGainPct();
+      const wrap = root.querySelector("#investmentChartBody");
+      if (!wrap) return;
+      wrap.innerHTML = `
+        <div class="page-intro">
+          <h2>Vývoj hodnoty investícií</h2>
+          <p>Graf ukazuje percentuálny výkon od nákupnej hodnoty, aby vklady neskresľovali samotnú čiaru.</p>
+        </div>
+        <div class="card account-chart-card">
+          <p class="eyebrow">Aktuálna hodnota investícií</p>
+          <div class="amount" style="color:var(--blue-dark)">${formatMoney(investments)}</div>
+          <div class="toolbar">
+            <span class="soft-badge ${gain < 0 ? "loss" : ""}">${formatPct(gain)}</span>
+            ${["1D", "5D", "1R"].map(range => `<button class="range-btn ${selectedInvestmentRange === range ? "active" : ""}" data-investment-range="${range}" type="button">${range}</button>`).join("")}
+          </div>
+          <div class="chart">${investmentChartSvg(selectedInvestmentRange)}</div>
+        </div>
+        <div class="grid two section">
+          <div class="card stat-card"><p>Vklad</p><strong>${formatMoney(portfolioCost())}</strong></div>
+          <div class="card stat-card"><p>Výkon od nákupu</p><strong class="${investments - portfolioCost() >= 0 ? "gain" : "loss"}">${formatPct(gain)} · ${investments - portfolioCost() >= 0 ? "+" : ""}${formatMoney(investments - portfolioCost())}</strong></div>
+        </div>
+      `;
+      wrap.querySelectorAll("[data-investment-range]").forEach(button => {
+        button.addEventListener("click", () => {
+          selectedInvestmentRange = button.dataset.investmentRange;
+          renderInvestmentChartBody();
+        });
+      });
+    }
+
+    function renderInvestmentChart() {
+      setTitle("Investície");
+      root.innerHTML = `<section class="screen" id="investmentChartBody"></section>`;
+      renderInvestmentChartBody();
+    }
+
     function historySeries(assetId, range) {
       const asset = byId[assetId];
       const current = state.prices[assetId] || asset.basePrice;
@@ -2136,7 +2832,7 @@
         "5D": { count: 32, noise: .68, wave: 1.25 },
         "1R": { count: 54, noise: 1.08, wave: 1.75 }
       }[range] || { count: 32, noise: .68, wave: 1.25 };
-      const riskMultiplier = asset.risk === "vysoké" || asset.risk === "vysokÃ©" ? 1.55 : asset.risk === "stredné" || asset.risk === "strednÃ©" ? 1.08 : .72;
+      const riskMultiplier = asset.risk === "vysoké" || asset.risk === "vysokÃ©" ? 1.55 : asset.risk === "vyššie" ? 1.32 : asset.risk === "stredné" || asset.risk === "strednÃ©" ? 1.08 : .72;
       const sigma = Math.min(asset.basePrice * .32, Math.max(asset.basePrice * .018, 10 * config.noise * riskMultiplier));
       const anchor = asset.basePrice + (seededUnit(`${assetId}-${range}-anchor`) - .5) * sigma;
       let value = anchor;
@@ -2168,9 +2864,9 @@
             <div class="row" style="border-top:1px solid rgba(197,198,208,.48);border-bottom:0;padding-bottom:0">
               <div>
                 <p class="eyebrow">Aktuálna cena</p>
-                <strong>${animatedPrice(state.prices[assetId], "", asset.currency)}</strong>
-                <span class="${move >= 0 ? "gain" : "loss"}" style="font-size:12px;font-weight:900;margin-left:6px">${move >= 0 ? "+" : ""}${move.toFixed(2)}%</span>
-                ${asset.currency === "USD" ? `<p class="portfolio-meta" style="margin-top:6px">Účet je v EUR · kurz demo ${USD_EUR_RATE.toFixed(2)}</p>` : ""}
+                <strong id="buyCurrentPrice">${animatedPrice(state.prices[assetId], "", asset.currency)}</strong>
+                <span id="buyCurrentMove" class="${move >= 0 ? "gain" : "loss"}" style="font-size:12px;font-weight:900;margin-left:6px">${move >= 0 ? "+" : ""}${move.toFixed(2)}%</span>
+                ${asset.currency !== "EUR" ? `<p class="portfolio-meta" style="margin-top:6px">Účet je v EUR · demo kurz ${asset.currency === "USD" ? USD_EUR_RATE.toFixed(2) : CHF_EUR_RATE.toFixed(2)}</p>` : ""}
               </div>
               <svg class="mini-chart" viewBox="0 0 100 40" aria-hidden="true">
                 <path d="M0 35 Q 25 34, 48 17 T 100 6" fill="none" stroke="#4479ff" stroke-width="3" stroke-linecap="round"/>
@@ -2178,11 +2874,21 @@
             </div>
           </div>
 
-          <div class="field section">
-            <label for="buyUnits">Počet jednotiek</label>
-            <div class="input-wrap">
-              <input id="buyUnits" class="input" type="number" min="0" step="0.0001" value="1" inputmode="decimal">
-              <span class="suffix">${asset.id}</span>
+          <div class="buy-converter section" id="buyConverter">
+            <div class="field unit-field">
+              <label for="buyUnits">Počet jednotiek</label>
+              <div class="input-wrap">
+                <input id="buyUnits" class="input" type="text" value="1" inputmode="decimal">
+                <span class="suffix">${asset.id}</span>
+              </div>
+            </div>
+            <button id="swapBuyFields" class="swap-icon" type="button" aria-label="Prehodiť poradie jednotiek a eur">⇅</button>
+            <div class="field amount-field">
+              <label for="buyAmount">Suma v eurách</label>
+              <div class="input-wrap">
+                <input id="buyAmount" class="input" type="text" inputmode="decimal">
+                <span class="suffix">€</span>
+              </div>
             </div>
           </div>
 
@@ -2206,28 +2912,58 @@
         </section>
       `;
       const input = root.querySelector("#buyUnits");
+      const amountInput = root.querySelector("#buyAmount");
+      const converter = root.querySelector("#buyConverter");
+      const swapFields = root.querySelector("#swapBuyFields");
       const total = root.querySelector("#buyTotal");
       const estimate = root.querySelector("#buyEstimate");
       const fee = root.querySelector("#buyFee");
       const feeLabel = root.querySelector("#buyFeeLabel");
       const confirm = root.querySelector("#confirmBuy");
-      const update = () => {
-        const units = Number(input.value) || 0;
+      let syncing = false;
+      const unitTotalInEur = () => {
+        const price = state.prices[assetId] || asset.basePrice;
+        const accountUnit = accountValue(asset, price);
+        return accountUnit + conversionFee(asset, accountUnit);
+      };
+      const update = (source = "units") => {
+        const units = Number(String(input.value).replace(",", ".")) || 0;
         const breakdown = buyBreakdown(asset, units);
+        if (!syncing && source !== "amount") {
+          syncing = true;
+          amountInput.value = units > 0 ? breakdown.total.toFixed(2) : "";
+          syncing = false;
+        }
         total.textContent = formatMoney(breakdown.total);
         estimate.textContent = asset.currency === "USD"
           ? `${formatAssetMoney(asset, breakdown.assetSubtotal)} ≈ ${formatMoney(breakdown.accountSubtotal)}`
+          : asset.currency === "CHF"
+            ? `${formatAssetMoney(asset, breakdown.assetSubtotal)} ≈ ${formatMoney(breakdown.accountSubtotal)}`
           : formatMoney(breakdown.accountSubtotal);
         fee.textContent = formatMoney(breakdown.fee);
-        feeLabel.textContent = asset.currency === "USD" ? "Poplatok za konverziu 1 %" : "Poplatok";
+        feeLabel.textContent = asset.currency !== "EUR" ? "Poplatok za konverziu 1 %" : "Poplatok";
         confirm.disabled = units <= 0 || breakdown.total > state.cash;
         const notice = root.querySelector("#buyNotice");
         notice.className = breakdown.total > state.cash ? "notice err show" : "notice err";
         notice.textContent = breakdown.total > state.cash ? "Nemáš dostatok hotovosti na nákup vrátane poplatkov." : "";
       };
-      input.addEventListener("input", update);
+      input.addEventListener("input", () => update("units"));
+      amountInput.addEventListener("input", () => {
+        if (syncing) return;
+        const amount = Number(String(amountInput.value).replace(",", ".")) || 0;
+        const units = amount > 0 ? amount / Math.max(.0001, unitTotalInEur()) : 0;
+        syncing = true;
+        input.value = units > 0 ? units.toFixed(4) : "";
+        syncing = false;
+        update("amount");
+      });
+      swapFields.addEventListener("click", () => {
+        converter.classList.toggle("swapped");
+        const focusTarget = converter.classList.contains("swapped") ? amountInput : input;
+        focusTarget.focus();
+      });
       confirm.addEventListener("click", () => {
-        const units = Number(input.value) || 0;
+        const units = Number(String(input.value).replace(",", ".")) || 0;
         const price = state.prices[assetId];
         const breakdown = buyBreakdown(asset, units);
         if (units <= 0 || breakdown.total > state.cash) return update();
@@ -2240,13 +2976,14 @@
           state.holdings[assetId] = { id: assetId, units, avgPrice: roundMoney(breakdown.total / units) };
         }
         state.cash = roundMoney(state.cash - breakdown.total);
+        appendHistorySample({ investmentStartValue: portfolioCost() });
         saveState();
         historyStack = [];
         showModal({
           title: "Nákup úspešný",
-          text: "Kúpil si investíciu. Jej cena sa bude meniť. Vývoj investície v krátkom horizonte môže byť nepredvídateľný a ovplyvnený mnohými faktormi. Rast, alebo strata neznamená to, že si sa rozhodol dobre alebo zle.",
+          text: "Kúpil si investíciu. Jej cena sa bude meniť. Krátkodobý pohyb ešte neznamená, že si sa rozhodol dobre alebo zle.",
           button: "Späť na prehľad",
-          onClose: () => navigate({ screen: "dashboard" }, true)
+          onClose: goToDashboard
         });
       });
       update();
@@ -2263,7 +3000,7 @@
             <div class="row" style="border-bottom:0;align-items:end">
               <div>
                 <p class="eyebrow">Aktuálna cena</p>
-                <div class="amount" style="font-size:28px;color:var(--blue)">${animatedPrice(state.prices[assetId], "", asset.currency)}</div>
+                <div id="sellCurrentPrice" class="amount" style="font-size:28px;color:var(--blue)">${animatedPrice(state.prices[assetId], "", asset.currency)}</div>
               </div>
               <div style="text-align:right">
                 <p class="eyebrow">Vlastnené kusy</p>
@@ -2323,6 +3060,7 @@
           state.holdings[assetId] = { ...holding, units: remaining };
         }
         state.cash = roundMoney(state.cash + value);
+        appendHistorySample();
         saveState();
         historyStack = [];
         showModal({
@@ -2391,10 +3129,55 @@
           return;
         }
         state.cash = roundMoney(state.cash - amount);
+        appendHistorySample({ accountFlow: -amount });
         saveState();
         closeModal();
         renderDashboard();
         showNotice("dashboardNotice", "ok", `Vybral si ${formatMoney(amount)}.`);
+      };
+      modalCancel.onclick = closeModal;
+      modalButton.onclick = submit;
+      input.addEventListener("input", () => { error.textContent = ""; });
+      input.addEventListener("keydown", event => {
+        if (event.key === "Enter") submit();
+      });
+      input.focus();
+      input.select();
+    }
+
+    function showTopUpModal() {
+      const remaining = roundMoney(INVESTMENT_LIMIT - (Number(state.transferredAmount) || 0));
+      if (remaining <= 0) {
+        showNotice("dashboardNotice", "info", "Už nemáš viac peňazí na osobnom účte. Počkaj na ďalšiu výplatu.<br>V bežnom živote si ich vieš poslať cez banku, kartou, paypalom atď...<br>Pozor ale na poplatky, niektoré spôsoby sú spoplatnené viac, iné menej.", true);
+        return;
+      }
+      modalIcon.textContent = "↗";
+      modalTitle.textContent = "Pridať peniaze";
+      modalText.innerHTML = `
+        <span>Z výplaty 1200 € môžeš v deme investovať najviac <strong>${formatMoney(INVESTMENT_LIMIT)}</strong>. Ešte vieš pridať <strong>${formatMoney(remaining)}</strong>.</span>
+        <span class="modal-field">
+          <label for="topUpAmount">Suma na doplnenie</label>
+          <input id="topUpAmount" type="number" min="1" max="${remaining}" step="1" inputmode="decimal" value="${Math.min(100, Math.floor(remaining))}">
+          <span id="topUpError" class="modal-error"></span>
+        </span>
+      `;
+      modalButton.textContent = "Pridať";
+      modalButton.className = "btn primary full";
+      modalCancel.style.display = "";
+      modalCancel.textContent = "Zrušiť";
+      modalActions.classList.add("confirm");
+      appModal.classList.add("show");
+      const input = modalText.querySelector("#topUpAmount");
+      const error = modalText.querySelector("#topUpError");
+      const submit = () => {
+        const amount = roundMoney(Number(String(input.value).replace(",", ".")));
+        if (!amount || amount <= 0 || amount > remaining) {
+          error.textContent = `Zadaj sumu od 1 € do ${formatMoney(remaining)}.`;
+          input.focus();
+          return;
+        }
+        closeModal();
+        runTopUpFlow(amount);
       };
       modalCancel.onclick = closeModal;
       modalButton.onclick = submit;
@@ -2423,7 +3206,7 @@
       if (state.transferredAmount > 0) navigate({ screen: "dashboard" });
     });
     navMarkets.addEventListener("click", () => {
-      if (state.transferredAmount > 0) navigate({ screen: "categories" });
+      if (state.transferredAmount > 0) goToMarkets();
     });
     navWallet.addEventListener("click", () => {
       if (state.transferredAmount > 0) {
@@ -2449,9 +3232,53 @@
       });
     });
 
+    function startLiveUpdates() {
+      if (window.__eduInvestPriceTimer) clearInterval(window.__eduInvestPriceTimer);
+      if (window.__eduInvestNewsTimer) clearInterval(window.__eduInvestNewsTimer);
+      if (window.__eduInvestFrame) cancelAnimationFrame(window.__eduInvestFrame);
+      window.__eduInvestLastPriceTick = Date.now();
+      window.__eduInvestLastNewsTick = Date.now();
+      window.__eduInvestPriceTimer = setInterval(() => {
+        try {
+          tickPrices();
+          window.__eduInvestLastPriceTick = Date.now();
+        } catch (error) {
+          console.error("price tick failed", error);
+        }
+      }, PRICE_TICK_MS);
+      window.__eduInvestNewsTimer = setInterval(() => {
+        try {
+          tickNews();
+          window.__eduInvestLastNewsTick = Date.now();
+        } catch (error) {
+          console.error("news tick failed", error);
+        }
+      }, NEWS_TICK_MS);
+      const frameLoop = () => {
+        const now = Date.now();
+        if (now - window.__eduInvestLastPriceTick >= PRICE_TICK_MS) {
+          try {
+            tickPrices();
+            window.__eduInvestLastPriceTick = now;
+          } catch (error) {
+            console.error("price frame tick failed", error);
+          }
+        }
+        if (now - window.__eduInvestLastNewsTick >= NEWS_TICK_MS) {
+          try {
+            tickNews();
+            window.__eduInvestLastNewsTick = now;
+          } catch (error) {
+            console.error("news frame tick failed", error);
+          }
+        }
+        window.__eduInvestFrame = requestAnimationFrame(frameLoop);
+      };
+      window.__eduInvestFrame = requestAnimationFrame(frameLoop);
+    }
+
+    startLiveUpdates();
     render();
-    setInterval(tickPrices, PRICE_TICK_MS);
-    setInterval(tickNews, NEWS_TICK_MS);
   </script>
 </body>
 </html>
