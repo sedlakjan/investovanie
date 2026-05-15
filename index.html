@@ -244,6 +244,17 @@
       background: #fff0f0;
       color: var(--red);
     }
+    .neutral-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      border-radius: 8px;
+      padding: 4px 8px;
+      background: rgba(222, 211, 143, .18);
+      color: #ded38f;
+      font-size: 12px;
+      font-weight: 900;
+    }
     .account-chart {
       position: relative;
       z-index: 1;
@@ -261,13 +272,13 @@
     .account-chart .chart-grid { stroke: rgba(255,255,255,.12); }
     .account-chart .account-line {
       fill: none;
-      stroke: #fff;
+      stroke: #ded38f;
       stroke-width: 5;
       stroke-linecap: round;
       stroke-linejoin: round;
       filter: drop-shadow(0 8px 16px rgba(0,0,0,.22));
     }
-    .account-chart .account-area { fill: rgba(255,255,255,.12); }
+    .account-chart .account-area { fill: rgba(222,211,143,.14); }
     .account-chart-card {
       min-height: 300px;
       padding: 18px;
@@ -1324,6 +1335,20 @@
       .split { grid-template-columns: 1.1fr .9fr; align-items: start; }
       .asset-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
+    @media (max-width: 420px) {
+      .stat-topline { gap: 6px; }
+      .stat-card.actionable { min-height: 130px; }
+      .stat-card p { font-size: 11px; }
+      .stat-card strong { font-size: 20px; }
+      .stat-card.actionable .soft-badge {
+        max-width: 72px;
+        padding: 4px 6px;
+        font-size: 10px;
+        line-height: 1.15;
+        justify-content: center;
+        text-align: center;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1769,7 +1794,6 @@
         const accountChart = root.querySelector("#dashboardAccountChart");
         const investmentChart = root.querySelector("#dashboardInvestmentChart");
         const investmentBadge = root.querySelector("#dashboardInvestmentBadge");
-        const badge = root.querySelector("#dashboardGrowthBadge");
         if (totalValue) totalValue.textContent = formatMoney(total);
         if (investmentsValue) investmentsValue.textContent = formatMoney(investments);
         if (cashValue) cashValue.textContent = formatMoney(state.cash);
@@ -1780,7 +1804,6 @@
           investmentBadge.classList.toggle("loss", gain < 0);
           investmentBadge.textContent = formatPct(gain);
         }
-        if (badge) badge.textContent = investments > 0 ? formatPct(accountGrowthPct("1D")) : "↗ +0,00 %";
         renderPortfolioList({ limit: 3 });
       }
       if (route.screen === "buy") {
@@ -2200,13 +2223,12 @@
             <h2>Prehľad účtu</h2>
           </div>
 
-          <button id="openAccountChart" class="card dark-card total-card" type="button" aria-label="Zobraziť vývoj hodnoty účtu">
+          <button id="openAccountChart" class="card dark-card total-card" type="button" aria-label="Zobraziť vývoj celkovej hodnoty portfólia">
             <div class="total-watermark" aria-hidden="true">⌁</div>
-            <p class="eyebrow">Celková hodnota účtu (hotovosť + investície)</p>
+            <p class="eyebrow">Celková hodnota portfólia</p>
             <div class="amount" id="dashboardTotalValue">${formatMoney(total)}</div>
             <div class="toolbar" style="margin-top:12px">
-              <span class="soft-badge" id="dashboardGrowthBadge">${investments > 0 ? formatPct(accountGrowthPct("1D")) : "↗ +0,00 %"}</span>
-              <span style="color:rgba(255,255,255,.62);font-size:13px">demo vývoj účtu</span>
+              <span style="color:rgba(255,255,255,.62);font-size:13px">hotovosť plus investície</span>
             </div>
             <div class="account-chart" id="dashboardAccountChart" aria-hidden="true">${accountChartSvg("1D", true)}</div>
           </button>
@@ -2603,12 +2625,31 @@
       return actualHistorySeries("account", range, accountTotal());
     }
 
+    function accountChange(range) {
+      const series = accountHistorySeries(range);
+      const first = series[0]?.value || 0;
+      const last = series[series.length - 1]?.value || 0;
+      return roundMoney(last - first);
+    }
+
+    function formatMoneyChange(value) {
+      const amount = roundMoney(value);
+      return `${amount >= 0 ? "+" : ""}${formatMoney(amount)}`;
+    }
+
+    function accountChangeLabel(range) {
+      return range === "1D" ? "Zmena dnes" : "Zmena za obdobie";
+    }
+
     function investmentHistorySeries(range) {
       return actualHistorySeries("investments", range, portfolioValue());
     }
 
     function investmentPerformanceSeries(range) {
       const currentCost = portfolioCost();
+      if (currentCost <= 0) {
+        return [{ time: Date.now(), value: 0, moneyValue: 0, cost: 0 }];
+      }
       return investmentHistorySeries(range).map(point => {
         const cost = Number(point.cost) || currentCost || Number(point.value) || 1;
         const value = cost ? ((Number(point.value) - cost) / cost) * 100 : 0;
@@ -2664,7 +2705,7 @@
       return 100;
     }
 
-    function historyChartSvg({ series, range = "1D", compact = false, label = "Graf vývoja", currency = "EUR", valueFormatter = null, minStep = null, floorAtZero = true, includeZero = false }) {
+    function historyChartSvg({ series, range = "1D", compact = false, label = "Graf vývoja", currency = "EUR", valueFormatter = null, minStep = null, floorAtZero = true, includeZero = false, strokeOverride = null, areaOpacity = .22 }) {
       const values = series.map(point => point.value);
       const scaleValues = includeZero ? [...values, 0] : values;
       const minPrice = Math.min(...values);
@@ -2684,11 +2725,12 @@
       const points = series.map((point, index) => [toX(index), toY(point.value)]);
       const line = points.map((point, index) => `${index ? "L" : "M"} ${point[0].toFixed(1)} ${point[1].toFixed(1)}`).join(" ");
       const area = `${line} L ${view.l + width} ${view.t + height} L ${view.l} ${view.t + height} Z`;
+      const stroke = strokeOverride || (values[values.length - 1] >= values[0] ? "#138a4d" : "#c43d3d");
       if (compact) {
         return `
           <svg viewBox="0 0 ${view.w} ${view.h}" role="img" aria-label="${label}">
-            <path class="account-area" d="${area}"></path>
-            <path class="account-line" d="${line}"></path>
+            <path class="account-area" d="${area}" style="fill:${stroke};fill-opacity:${areaOpacity}"></path>
+            <path class="account-line" d="${line}" style="stroke:${stroke}"></path>
           </svg>
         `;
       }
@@ -2699,7 +2741,6 @@
       const showSeconds = lastTime - firstTime < 60 * 60 * 1000;
       const labelTime = time => new Intl.DateTimeFormat("sk-SK", { hour: "2-digit", minute: "2-digit", second: showSeconds ? "2-digit" : undefined }).format(new Date(time));
       const xLabels = series.length <= 2 ? ["Štart", "", "Teraz"] : [labelTime(firstTime), labelTime(middleTime), labelTime(lastTime)];
-      const stroke = values[values.length - 1] >= values[0] ? "#138a4d" : "#c43d3d";
       return `
         <svg viewBox="0 0 420 220" role="img" aria-label="${label}">
           <defs>
@@ -2730,7 +2771,9 @@
         series: accountHistorySeries(range),
         range,
         compact,
-        label: "Graf vývoja hodnoty investičného účtu"
+        label: "Graf vývoja celkovej hodnoty portfólia",
+        strokeOverride: "#ded38f",
+        areaOpacity: compact ? .16 : .18
       });
     }
 
@@ -2755,14 +2798,13 @@
       if (!wrap) return;
       wrap.innerHTML = `
         <div class="page-intro">
-          <h2>Vývoj hodnoty účtu</h2>
-          <p>Celková hodnota hotovosti a investícií podľa reálnych demo tikov.</p>
+          <h2>Celková hodnota portfólia</h2>
+          <p>Hotovosť plus investície podľa reálnych demo tikov.</p>
         </div>
         <div class="card account-chart-card">
           <p class="eyebrow">Aktuálna hodnota</p>
           <div class="amount" style="color:var(--blue-dark)">${formatMoney(total)}</div>
           <div class="toolbar">
-            <span class="soft-badge">${formatPct(accountGrowthPct(selectedAccountRange))}</span>
             ${["1D", "5D", "1R"].map(range => `<button class="range-btn ${selectedAccountRange === range ? "active" : ""}" data-account-range="${range}" type="button">${range}</button>`).join("")}
           </div>
           <div class="chart">${accountChartSvg(selectedAccountRange)}</div>
@@ -2781,7 +2823,7 @@
     }
 
     function renderAccountChart() {
-      setTitle("Vývoj účtu");
+      setTitle("Portfólio");
       root.innerHTML = `<section class="screen" id="accountChartBody"></section>`;
       renderAccountChartBody();
     }
