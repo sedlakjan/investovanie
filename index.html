@@ -1300,6 +1300,21 @@
       font-size: 24px;
       font-weight: 950;
     }
+    .buy-price-line {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      min-width: 0;
+      width: 100%;
+    }
+    .buy-price-line .asset-icon {
+      flex: 0 0 48px;
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      margin-top: -2px;
+    }
     .buy-current-meta {
       margin-top: 8px;
       font-size: 13px;
@@ -3397,11 +3412,16 @@
               <div class="wallet-icon" aria-hidden="true">▣</div>
             </div>
             <div class="row" style="border-top:1px solid rgba(197,198,208,.48);border-bottom:0;padding-bottom:0">
-              <div>
+              <div style="width:100%">
                 <p class="eyebrow">Aktuálna cena</p>
-                <strong id="buyCurrentPrice" class="buy-current-price">${buyCurrentPriceMarkup(asset)}</strong>
-                <span id="buyCurrentMove" class="${move >= 0 ? "gain" : "loss"}" style="font-size:13px;font-weight:950;margin-left:8px">${move >= 0 ? "+" : ""}${move.toFixed(2)}%</span>
-                <p class="portfolio-meta buy-current-meta">Účet je v EUR${asset.currency !== "EUR" ? ` · demo kurz ${asset.currency === "USD" ? USD_EUR_RATE.toFixed(2) : CHF_EUR_RATE.toFixed(2)}` : ""}</p>
+                <div class="buy-price-line">
+                  <div>
+                    <strong id="buyCurrentPrice" class="buy-current-price">${buyCurrentPriceMarkup(asset)}</strong>
+                    <span id="buyCurrentMove" class="${move >= 0 ? "gain" : "loss"}" style="font-size:13px;font-weight:950">${move >= 0 ? "+" : ""}${move.toFixed(2)}%</span>
+                    <p class="portfolio-meta buy-current-meta">Účet je v EUR${asset.currency !== "EUR" ? ` · demo kurz ${asset.currency === "USD" ? USD_EUR_RATE.toFixed(2) : CHF_EUR_RATE.toFixed(2)}` : ""}</p>
+                  </div>
+                  <div class="asset-icon" aria-hidden="true">${iconForAsset(asset)}</div>
+                </div>
               </div>
             </div>
           </div>
