@@ -3517,6 +3517,9 @@
           const amount = Number(String(amountInput.value).replace(",", ".")) || 0;
           const approxUnits = amount > 0 ? amount / Math.max(.0001, unitTotalInEur()) : 0;
           input.placeholder = approxUnits > 0 ? `≈ ${formatUnits(approxUnits)}` : "napr. 2,531";
+          if (input.value) {
+            input.value = approxUnits > 0 ? approxUnits.toFixed(4) : "";
+          }
           if (!input.value) {
             const estimatedAccountSubtotal = asset.currency !== "EUR" ? amount / (1 + CONVERSION_FEE_RATE) : amount;
             const estimatedFee = asset.currency !== "EUR" ? amount - estimatedAccountSubtotal : 0;
