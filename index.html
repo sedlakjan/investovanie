@@ -233,6 +233,7 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      white-space: nowrap;
       border-radius: 8px;
       padding: 4px 8px;
       background: rgba(26, 188, 110, .16);
@@ -1281,12 +1282,17 @@
       opacity: .72;
     }
     .buy-current-price {
-      display: inline-flex;
-      align-items: baseline;
-      gap: 4px;
+      display: block;
       color: var(--ink);
       font-size: 24px;
       line-height: 1.2;
+      font-weight: 950;
+    }
+    .buy-current-price .converted {
+      display: block;
+      margin-top: 4px;
+      color: var(--blue-dark);
+      font-size: 23px;
       font-weight: 950;
     }
     .buy-current-price .price-slot {
@@ -1591,9 +1597,9 @@
       .stat-card p { font-size: 11px; }
       .stat-card strong { font-size: 20px; }
       .stat-card.actionable .soft-badge {
-        max-width: 72px;
-        padding: 4px 6px;
-        font-size: 10px;
+        max-width: none;
+        padding: 4px 5px;
+        font-size: 9px;
         line-height: 1.15;
         justify-content: center;
         text-align: center;
@@ -1923,6 +1929,13 @@
       return `<span class="price-slot ${className}" aria-label="${text}"><span>${text}</span></span>`;
     }
 
+    function buyCurrentPriceMarkup(asset) {
+      const price = state.prices[asset.id];
+      const primary = `1 ${asset.id} = ${animatedPrice(price, "", asset.currency)}`;
+      const converted = asset.currency !== "EUR" ? `<span class="converted">≈ ${formatMoney(accountValue(asset, price))}</span>` : "";
+      return `${primary}${converted}`;
+    }
+
     function formatUnits(value) {
       const n = Number(value) || 0;
       return n.toLocaleString("sk-SK", { maximumFractionDigits: 4 });
@@ -2091,7 +2104,7 @@
         const fee = root.querySelector("#buyFee");
         const feeLabel = root.querySelector("#buyFeeLabel");
         const confirm = root.querySelector("#confirmBuy");
-        if (price) price.innerHTML = `1 ${asset.id} = ${animatedPrice(state.prices[asset.id], "", asset.currency)}${asset.currency !== "EUR" ? ` ≈ ${formatMoney(accountValue(asset, state.prices[asset.id]))}` : ""}`;
+        if (price) price.innerHTML = buyCurrentPriceMarkup(asset);
         if (moveEl) {
           moveEl.className = move >= 0 ? "gain" : "loss";
           moveEl.textContent = `${move >= 0 ? "+" : ""}${move.toFixed(2)}%`;
@@ -3386,13 +3399,10 @@
             <div class="row" style="border-top:1px solid rgba(197,198,208,.48);border-bottom:0;padding-bottom:0">
               <div>
                 <p class="eyebrow">Aktuálna cena</p>
-                <strong id="buyCurrentPrice" class="buy-current-price">1 ${asset.id} = ${animatedPrice(state.prices[assetId], "", asset.currency)}${asset.currency !== "EUR" ? ` ≈ ${formatMoney(accountValue(asset, state.prices[assetId]))}` : ""}</strong>
+                <strong id="buyCurrentPrice" class="buy-current-price">${buyCurrentPriceMarkup(asset)}</strong>
                 <span id="buyCurrentMove" class="${move >= 0 ? "gain" : "loss"}" style="font-size:13px;font-weight:950;margin-left:8px">${move >= 0 ? "+" : ""}${move.toFixed(2)}%</span>
                 <p class="portfolio-meta buy-current-meta">Účet je v EUR${asset.currency !== "EUR" ? ` · demo kurz ${asset.currency === "USD" ? USD_EUR_RATE.toFixed(2) : CHF_EUR_RATE.toFixed(2)}` : ""}</p>
               </div>
-              <svg class="mini-chart" viewBox="0 0 100 40" aria-hidden="true">
-                <path d="M0 35 Q 25 34, 48 17 T 100 6" fill="none" stroke="#4479ff" stroke-width="3" stroke-linecap="round"/>
-              </svg>
             </div>
           </div>
 
