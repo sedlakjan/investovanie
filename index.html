@@ -2172,7 +2172,6 @@
     function navigate(nextRoute, replace = false) {
       if (!replace) historyStack.push(route);
       route = nextRoute;
-      movePrices();
       render();
       scrollToTop();
     }
@@ -3343,8 +3342,8 @@
       if (!wrap) return;
       wrap.innerHTML = `
         <div class="page-intro">
-          <h2>Aktuálny vývoj hodnoty investícií</h2>
-          <p>Graf ukazuje percentuálny výkon od nákupnej hodnoty, aby vklady neskresľovali samotnú čiaru.</p>
+          <h2>Hodnota investícií</h2>
+          <p>Graf ukazuje percentuálny výkon tvojej investície/í</p>
         </div>
         <div class="card account-chart-card">
           <p class="eyebrow">Aktuálna hodnota investícií</p>
@@ -3455,7 +3454,7 @@
               </div>
             </div>
           </div>
-          <p class="fraction-info">Nemusíš kúpiť celý kus. Pri drahších aktívach vieš kúpiť len malú časť.</p>
+          <p class="fraction-info">Nemusíš kúpiť celý kus. Pri nedostatku peňazí vieš kúpiť aj časť aktíva.</p>
 
           <div class="order-summary">
             <div class="summary-box">
@@ -3474,9 +3473,9 @@
           <div id="buyNotice" class="notice err"></div>
           <button id="confirmBuy" class="btn primary full section" type="button">Potvrdiť nákup <span aria-hidden="true">→</span></button>
           <details class="trade-help">
-            <summary><span aria-hidden="true">ⓘ</span><span>Ako funguje obchod?</span></summary>
+            <summary><span aria-hidden="true">ⓘ</span><span>Ako funguje obchodovanie?</span></summary>
             <div class="trade-help-body">
-              <p>Práve robíš long obchod – kupuješ aktívum a očakávaš, že jeho cena porastie. Zisk vzniká až vtedy, keď predáš drahšie, než si kúpil.</p>
+              <p>Ak teraz nakúpiš, tak robíš long obchod, tzv. longovanie. Kupuješ aktívum a očakávaš, že jeho cena porastie. Zisk máš ak predáš drahšie, ako si na začiatku kúpil.</p>
               <p><strong>Shortovanie:</strong> Stávka na pokles ceny. Investor očakáva, že cena pôjde dole. Je to rizikovejšie ako bežný nákup, lebo strata môže byť veľmi vysoká.</p>
               <p><strong>Market order:</strong> Nákup alebo predaj hneď za aktuálnu dostupnú cenu. Je rýchly, ale výsledná cena sa môže mierne líšiť od tej, ktorú práve vidíš.</p>
               <p><strong>Limit order:</strong> Pokyn kúpiť alebo predať iba za cenu, ktorú si nastavíš. Ak sa trh na túto cenu nedostane, obchod sa nemusí uskutočniť.</p>
@@ -3484,7 +3483,7 @@
               <p><strong>Take-profit:</strong> Hranica, pri ktorej sa investícia automaticky predá so ziskom. Používa sa vtedy, keď si investor dopredu nastaví, aký zisk mu už stačí.</p>
             </div>
           </details>
-          <p class="legal">Potvrdením odošleš demo pokyn na nákup za aktuálnu fiktívnu cenu.</p>
+          <p class="legal">Potvrdením odošleš simulácií pokyn na nákup za aktuálnu fiktívnu cenu.</p>
         </section>
       `;
       const input = root.querySelector("#buyUnits");
@@ -3567,7 +3566,7 @@
         confirm.disabled = units <= 0 || breakdown.total > state.cash;
         const notice = root.querySelector("#buyNotice");
         notice.className = breakdown.total > state.cash ? "notice err show" : "notice err";
-        notice.textContent = breakdown.total > state.cash ? "Nemáš dostatok hotovosti na nákup vrátane poplatkov." : "";
+        notice.textContent = breakdown.total > state.cash ? "Nemáš dostatok peňazí na nákup vrátane poplatkov." : "";
       };
       amountInput.addEventListener("input", () => {
         if (syncing) return;
@@ -3611,7 +3610,7 @@
         converter.classList.toggle("swapped");
         const swapped = converter.classList.contains("swapped");
         unitsLabel.textContent = swapped ? "Koľko jednotiek si chceš kúpiť" : "Za túto sumu kúpiš približne";
-        amountLabel.textContent = swapped ? "Koľko ťa to bude stáť" : "Koľko chceš investovať? (Suma v eurách)";
+        amountLabel.textContent = swapped ? "Koľko ťa to bude stáť" : "Koľko peňazí chceš investovať? (Suma v eurách)";
         const focusTarget = swapped ? input : amountInput;
         focusTarget.focus();
       });
@@ -3904,7 +3903,7 @@
     navReset.addEventListener("click", () => {
       showModal({
         title: "Resetovať demo účet?",
-        text: "Vymaže sa hotovosť, portfólio aj aktuálne demo ceny. Začneš od osobného účtu s výplatou.",
+        text: "Začneš od začiatku, od osobného účtu s výplatou.",
         button: "Resetovať",
         cancelButton: "Nechať tak",
         buttonClass: "danger",
